@@ -64,9 +64,11 @@ abstract class SeededFeatureTestCase extends CIUnitTestCase
         return (int) $this->db->table('employees')->where('nip', $nip)->get()->getRow()->id;
     }
 
-    protected function period(int $year, int $month): array
+    protected function period(int $year, int $month): ?array
     {
-        return $this->db->table('payroll_periods')->where(['year' => $year, 'month' => $month])->get()->getRowArray();
+        $period = $this->db->table('payroll_periods')->where(['year' => $year, 'month' => $month])->get()->getRowArray();
+
+        return $period === null ? null : ['id' => (int) $period['id']] + $period;
     }
 
     /**

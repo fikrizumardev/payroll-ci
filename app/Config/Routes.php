@@ -122,6 +122,30 @@ $routes->group('loans', ['filter' => ['auth', 'role:finance']], static function 
     $routes->post('(:num)/reject', 'LoanController::reject/$1', ['as' => 'loans.reject']);
 });
 
+// ---------------------------------------------------------------------
+// Payroll — lihat: HR & Finance · generate/ajukan/penyesuaian: HR ·
+// setujui/tolak/bayar/kunci/ekspor bank: Finance. Super Admin selalu boleh.
+// ---------------------------------------------------------------------
+$routes->group('payroll', $viewMaster, static function (RouteCollection $routes): void {
+    $routes->get('/', 'PayrollController::index', ['as' => 'payroll.index']);
+    $routes->get('(:num)', 'PayrollController::show/$1', ['as' => 'payroll.show']);
+    $routes->get('(:num)/employees/(:num)', 'PayrollController::employee/$1/$2', ['as' => 'payroll.employee']);
+});
+$routes->group('payroll', $manageMaster, static function (RouteCollection $routes): void {
+    $routes->post('/', 'PayrollController::store', ['as' => 'payroll.store']);
+    $routes->post('(:num)/generate', 'PayrollController::generate/$1', ['as' => 'payroll.generate']);
+    $routes->post('(:num)/submit', 'PayrollController::submit/$1', ['as' => 'payroll.submit']);
+    $routes->post('(:num)/employees/(:num)/adjustments', 'PayrollController::storeAdjustment/$1/$2', ['as' => 'payroll.adjustments.store']);
+    $routes->post('(:num)/adjustments/(:num)/delete', 'PayrollController::deleteAdjustment/$1/$2', ['as' => 'payroll.adjustments.delete']);
+});
+$routes->group('payroll', ['filter' => ['auth', 'role:finance']], static function (RouteCollection $routes): void {
+    $routes->post('(:num)/approve', 'PayrollController::approve/$1', ['as' => 'payroll.approve']);
+    $routes->post('(:num)/reject', 'PayrollController::reject/$1', ['as' => 'payroll.reject']);
+    $routes->post('(:num)/pay', 'PayrollController::pay/$1', ['as' => 'payroll.pay']);
+    $routes->post('(:num)/lock', 'PayrollController::lock/$1', ['as' => 'payroll.lock']);
+    $routes->get('(:num)/export/bank', 'PayrollController::exportBank/$1', ['as' => 'payroll.export.bank']);
+});
+
 // Pengaturan — lihat: HR & Finance · ubah: Super Admin
 $routes->get('settings', 'SettingController::index', ['as' => 'settings.index', 'filter' => ['auth', 'role:hr,finance']]);
 $routes->post('settings/(:segment)', 'SettingController::update/$1', ['as' => 'settings.update', 'filter' => ['auth', 'role:superadmin']]);

@@ -144,7 +144,7 @@ final class AttendanceTest extends SeededFeatureTestCase
 
         $result->assertOK();
         $result->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
-        $body = $result->getBody();
+        $body = (string) $result->response()->getBody();
         $this->assertStringContainsString('nip;nama;tanggal;status;jam_masuk;jam_pulang;keterangan', $body);
         $this->assertStringContainsString('EMP-0014;"Andi Pratama";2026-10-19;hadir', $body);
         $this->assertStringNotContainsString('EMP-0031', $body); // Hadi sudah resign

@@ -300,7 +300,7 @@ $detail = static fn (string $label, ?string $value, bool $mono = false): string 
     <div x-show="tab === 'gaji'" x-cloak role="tabpanel">
         <?php
         $payrollRows = array_map(static fn (array $p): array => [
-            '<p class="font-semibold text-slate-900">' . esc($p['period_name']) . '</p><p class="text-xs text-slate-500">Dibayar ' . esc(tanggal_id($p['pay_date'])) . '</p>',
+            '<a href="' . url_to('payroll.employee', $p['period_id'], $employee['id']) . '" class="font-semibold text-slate-900 hover:text-brand-700">' . esc($p['period_name']) . '</a><p class="text-xs text-slate-500">Dibayar ' . esc(tanggal_id($p['pay_date'])) . '</p>',
             $p['present_days'] . ' / ' . $p['workdays'] . ($p['active_workdays'] < $p['workdays'] ? ' <span class="text-xs text-amber-700">(prorata)</span>' : ''),
             rupiah($p['total_earning']),
             rupiah($p['total_deduction']),

@@ -168,7 +168,7 @@ class EmployeeController extends BaseController
 
         $payrolls = $db->table('payrolls p')
             ->select('p.id, p.total_earning, p.total_deduction, p.pph21, p.take_home_pay, p.present_days, p.workdays, p.active_workdays, p.overtime_hours, p.ter_category, p.ter_rate')
-            ->select('pp.name AS period_name, pp.status AS period_status, pp.pay_date, pp.year, pp.month')
+            ->select('pp.id AS period_id, pp.name AS period_name, pp.status AS period_status, pp.pay_date, pp.year, pp.month')
             ->join('payroll_periods pp', 'pp.id = p.period_id')
             ->where('p.employee_id', $id)
             ->orderBy('pp.year', 'DESC')->orderBy('pp.month', 'DESC')

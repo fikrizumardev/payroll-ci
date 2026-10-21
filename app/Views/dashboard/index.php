@@ -192,11 +192,7 @@ $compact = static fn (int $amount): string => match (true) {
             <?php else: ?>
                 <ul class="divide-y divide-slate-100">
                     <?php foreach (array_slice(array_reverse($payroll['periods']), 0, 4) as $period): ?>
-                        <?php
-                        $steps    = ['draft', 'review', 'approved', 'paid', 'locked'];
-                        $position = array_search($period['status'], $steps, true);
-                        ?>
-                        <li class="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_auto] sm:items-center">
+                        <li class="relative grid gap-3 px-5 py-4 transition-colors hover:bg-slate-50/80 sm:grid-cols-[1fr_auto] sm:items-center">
                             <div class="flex items-center gap-4">
                                 <span class="flex size-11 shrink-0 flex-col items-center justify-center rounded-xl bg-slate-100 text-slate-700">
                                     <span class="text-[10px] font-bold uppercase"><?= esc(bulan_id((int) $period['month'], true)) ?></span>
@@ -204,15 +200,11 @@ $compact = static fn (int $amount): string => match (true) {
                                 </span>
                                 <div class="min-w-0">
                                     <div class="flex flex-wrap items-center gap-2">
-                                        <p class="font-semibold text-slate-900"><?= esc($period['name']) ?></p>
+                                        <a href="<?= url_to('payroll.show', $period['id']) ?>" class="font-semibold text-slate-900 after:absolute after:inset-0 hover:text-brand-700"><?= esc($period['name']) ?></a>
                                         <?= status_badge($period['status']) ?>
                                     </div>
                                     <p class="text-xs text-slate-500"><?= $period['employees'] ?> karyawan · gajian <?= esc(tanggal_id($period['pay_date'])) ?></p>
-                                    <ol class="mt-2 flex items-center gap-1" aria-label="Progres: <?= esc(status_meta($period['status'])['label'], 'attr') ?>">
-                                        <?php foreach ($steps as $i => $step): ?>
-                                            <li class="h-1.5 w-8 rounded-full <?= $i <= $position ? 'bg-brand-500' : 'bg-slate-200' ?>" title="<?= esc(status_meta($step)['label'], 'attr') ?>"></li>
-                                        <?php endforeach ?>
-                                    </ol>
+                                    <div class="mt-2"><?= component('payroll_stepper', ['status' => $period['status'], 'compact' => true]) ?></div>
                                 </div>
                             </div>
                             <div class="text-left sm:text-right">

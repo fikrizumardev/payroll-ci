@@ -174,7 +174,7 @@ $stateMeta = [
                                         <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset <?= tone_classes($tone) ?>"><?= esc($label) ?></span>
                                         <?php if ($row['state'] === LoanSchedule::PAID): ?>
                                             <span class="ml-1 text-xs text-slate-500"><?= esc(tanggal_id($row['paid_at'])) ?></span>
-                                        <?php elseif ($row['state'] === LoanSchedule::DEDUCTING && isset($periodIds[$row['period']]) && route_exists('payroll.show')): ?>
+                                        <?php elseif ($row['state'] === LoanSchedule::DEDUCTING && isset($periodIds[$row['period']])): ?>
                                             <a href="<?= url_to('payroll.show', $periodIds[$row['period']]) ?>" class="ml-1 text-xs font-semibold text-brand-600 hover:text-brand-700"><?= esc(status_meta((string) $row['period_status'])['label']) ?> →</a>
                                         <?php endif ?>
                                     </td>

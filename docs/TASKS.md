@@ -156,15 +156,19 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 9 — Modul Payroll (UI)
 
-- [ ] **T-901 (P0) List periode**: kartu per periode (bulan, status badge, jumlah karyawan, total netto) dan tombol "Buat Periode" (default bulan berikutnya, tanggal bayar = hari kerja terakhir).
-- [ ] **T-902 (P0) Detail/Review periode**:
+- [x] **T-901 (P0) List periode**: kartu per periode (bulan, status badge, jumlah karyawan, total netto) dan tombol "Buat Periode" (default bulan berikutnya, tanggal bayar = hari kerja terakhir).
+  - Tanggal bayar dapat diubah saat membuat periode (dalam bulan periode s.d. +15 hari); kartu menampilkan progres status & jumlah peringatan.
+- [x] **T-902 (P0) Detail/Review periode**:
   - Stepper status visual (Draft → Review → Approved → Paid → Locked).
   - KPI: total bruto, total potongan, total PPh 21, total BPJS perusahaan, total THP.
   - Tabel karyawan dengan pencarian, kolom angka `tabular-nums`, baris warning disorot, dan klik baris membuka rincian.
   - Tombol aksi sesuai peran & status (Generate/Regenerate, Ajukan Review, Approve, Reject + catatan, Tandai Dibayar, Kunci) dengan modal konfirmasi.
-- [ ] **T-903 (P0) Rincian gaji karyawan**: daftar `payroll_items` dikelompokkan (Pendapatan, Potongan, Kontribusi Perusahaan) dan panel "Cara hitung PPh 21" (bruto, kategori TER, tarif).
-- [ ] **T-904 (P0) Penyesuaian manual**: tambah bonus/THR/koreksi per karyawan (hanya status draft), lalu regenerate otomatis.
-- [ ] **T-905 (P0) Ekspor transfer bank**: CSV per bank (nama, no rekening, nominal, berita "Gaji Okt 2026").
+  - Stepper menampilkan waktu & pelaku setiap tahap; catatan penolakan Finance tampil di Draft; komponen `payroll_stepper` dipakai juga di dashboard.
+- [x] **T-903 (P0) Rincian gaji karyawan**: daftar `payroll_items` dikelompokkan (Pendapatan, Potongan, Kontribusi Perusahaan) dan panel "Cara hitung PPh 21" (bruto, kategori TER, tarif).
+  - Keterangan dasar hitung per baris (`PayrollItemPresenter`), perhitungan setahun untuk masa pajak terakhir, ringkasan kehadiran, dan navigasi antarkaryawan.
+- [x] **T-904 (P0) Penyesuaian manual**: tambah bonus/THR/koreksi per karyawan (hanya status draft), lalu regenerate otomatis.
+- [x] **T-905 (P0) Ekspor transfer bank**: CSV per bank (nama, no rekening, nominal, berita "Gaji Okt 2026").
+  - Data rekening dari snapshot payroll; tersedia untuk Finance sejak status Disetujui; karyawan tanpa rekening dilaporkan terpisah; setiap ekspor tercatat di audit log.
 
 ## Fase 10 — Slip Gaji & Self-Service
 

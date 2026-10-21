@@ -47,7 +47,7 @@ class PayrollService
     /**
      * @param array<string, mixed> $actor
      */
-    public function createPeriod(int $year, int $month, array $actor, ?string $notes = null): int
+    public function createPeriod(int $year, int $month, array $actor, ?string $notes = null, ?string $payDate = null): int
     {
         self::ensureRole($actor, 'buat periode payroll', 'hr');
 
@@ -64,13 +64,18 @@ class PayrollService
         $start = sprintf('%04d-%02d-01', $year, $month);
         $end   = date('Y-m-t', strtotime($start));
 
+        // Tanggal bayar boleh diatur manual: dalam bulan periode s.d. 15 hari setelahnya
+        if ($payDate !== null && (date('Y-m-d', (int) strtotime($payDate)) !== $payDate || $payDate < $start || $payDate > date('Y-m-d', strtotime($end . ' +15 days')))) {
+            throw new PayrollException('Tanggal bayar harus di antara ' . tanggal_id($start) . ' dan ' . tanggal_id(date('Y-m-d', strtotime($end . ' +15 days'))) . '.');
+        }
+
         $id = (int) $periods->insert([
             'name'       => periode_id($year, $month),
             'year'       => $year,
             'month'      => $month,
             'start_date' => $start,
             'end_date'   => $end,
-            'pay_date'   => $this->payDate($year, $month),
+            'pay_date'   => $payDate ?? $this->payDate($year, $month),
             'status'     => PayrollPeriodModel::STATUS_DRAFT,
             'workdays'   => $this->calendar($start, $end)->count($start, $end),
             'notes'      => $notes,
