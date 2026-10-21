@@ -31,16 +31,16 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 > Satu file migrasi per tabel, urut sesuai dependensi FK. Uang = `BIGINT`, persentase = `DECIMAL(6,3)`, semua tabel punya `created_at`/`updated_at`.
 
-- [ ] **T-101 (P0)** `settings`, `ptkp_rates`, `ter_rates`, `holidays`
-- [ ] **T-102 (P0)** `departments`, `positions`
-- [ ] **T-103 (P0)** `employees` (soft delete; FK ke departments & positions; unique `nip`, `nik`)
-- [ ] **T-104 (P0)** Tambah FK `departments.head_employee_id → employees.id` (migrasi terpisah karena sirkular)
-- [ ] **T-105 (P0)** `users` (**`username` UNIQUE, tanpa kolom email**), `user_tokens`
-- [ ] **T-106 (P0)** `salary_components`, `employee_components`
-- [ ] **T-107 (P0)** `attendances` (UNIQUE employee_id+date), `overtimes`
-- [ ] **T-108 (P0)** `loans`, `loan_installments`
-- [ ] **T-109 (P0)** `payroll_periods` (UNIQUE year+month), `payrolls` (UNIQUE period_id+employee_id), `payroll_items`, `payroll_adjustments`
-- [ ] **T-110 (P0)** `audit_logs`
+- [x] **T-101 (P0)** `settings`, `ptkp_rates`, `ter_rates`, `holidays`
+- [x] **T-102 (P0)** `departments`, `positions`
+- [x] **T-103 (P0)** `employees` (soft delete; FK ke departments & positions; unique `nip`, `nik`)
+- [x] **T-104 (P0)** Tambah FK `departments.head_employee_id → employees.id` (migrasi terpisah karena sirkular)
+- [x] **T-105 (P0)** `users` (**`username` UNIQUE, tanpa kolom email**), `user_tokens`
+- [x] **T-106 (P0)** `salary_components`, `employee_components`
+- [x] **T-107 (P0)** `attendances` (UNIQUE employee_id+date), `overtimes`
+- [x] **T-108 (P0)** `loans`, `loan_installments` (migrasi `loan_installments` dijalankan setelah `payrolls` karena FK `payroll_id`)
+- [x] **T-109 (P0)** `payroll_periods` (UNIQUE year+month), `payrolls` (UNIQUE period_id+employee_id), `payroll_items`, `payroll_adjustments`
+- [x] **T-110 (P0)** `audit_logs`
 - AC fase: `php spark migrate:refresh` sukses dua kali berturut-turut, dan `php spark db:table users` menunjukkan tidak ada kolom `email`.
 
 ## Fase 2 — Model & Helper
