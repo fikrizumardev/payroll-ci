@@ -25,6 +25,14 @@ $routes->group('', ['filter' => 'auth'], static function (RouteCollection $route
 
     $routes->get('account/password', 'AccountController::password', ['as' => 'account.password']);
     $routes->post('account/password', 'AccountController::updatePassword', ['as' => 'account.password.update']);
+
+    // Self-service karyawan (data milik sendiri)
+    $routes->get('my', 'My\DashboardController::index', ['as' => 'my.dashboard']);
+    $routes->get('my/payslips', 'My\PayslipController::index', ['as' => 'my.payslips']);
+
+    // Slip gaji — kepemilikan & status periode dicek di controller (karyawan: hanya miliknya, periode dibayar/terkunci)
+    $routes->get('payslips/(:num)', 'PayslipController::show/$1', ['as' => 'payslips.show']);
+    $routes->get('payslips/(:num)/pdf', 'PayslipController::pdf/$1', ['as' => 'payslips.pdf']);
 });
 
 // ---------------------------------------------------------------------
@@ -130,6 +138,7 @@ $routes->group('payroll', $viewMaster, static function (RouteCollection $routes)
     $routes->get('/', 'PayrollController::index', ['as' => 'payroll.index']);
     $routes->get('(:num)', 'PayrollController::show/$1', ['as' => 'payroll.show']);
     $routes->get('(:num)/employees/(:num)', 'PayrollController::employee/$1/$2', ['as' => 'payroll.employee']);
+    $routes->get('(:num)/payslips', 'PayslipController::zip/$1', ['as' => 'payroll.payslips.zip']);
 });
 $routes->group('payroll', $manageMaster, static function (RouteCollection $routes): void {
     $routes->post('/', 'PayrollController::store', ['as' => 'payroll.store']);

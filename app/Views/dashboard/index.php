@@ -313,7 +313,7 @@ $compact = static fn (int $amount): string => match (true) {
                         <?= esc($personal['employee']['position_name']) ?> · <?= esc($personal['employee']['department_name']) ?> · <?= esc($personal['employee']['nip']) ?>
                     </p>
                 </div>
-                <div class="ml-auto"><?= status_badge($personal['employee']['employment_type']) ?></div>
+                <a href="<?= url_to('my.dashboard') ?>" class="ml-auto text-sm font-semibold text-brand-600 hover:text-brand-700">Dashboard saya →</a>
             </div>
 
             <dl class="relative mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">

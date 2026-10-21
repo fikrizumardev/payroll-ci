@@ -22,7 +22,8 @@ class Navigation extends BaseConfig
         [
             'label' => 'Utama',
             'items' => [
-                ['label' => 'Dashboard', 'icon' => 'layout-dashboard', 'route' => 'dashboard'],
+                ['label' => 'Dashboard', 'icon' => 'layout-dashboard', 'route' => 'dashboard', 'roles' => ['hr', 'finance']],
+                ['label' => 'Dashboard', 'icon' => 'layout-dashboard', 'route' => 'my.dashboard', 'exactRoles' => ['employee'], 'needsEmployee' => true],
             ],
         ],
         [
@@ -79,6 +80,11 @@ class Navigation extends BaseConfig
 
             foreach ($group['items'] as $item) {
                 if (isset($item['roles']) && ! $auth->hasRole(...$item['roles'])) {
+                    continue;
+                }
+
+                // Menu khusus peran tertentu (tanpa pengecualian Super Admin)
+                if (isset($item['exactRoles']) && ! in_array($user['role'] ?? null, $item['exactRoles'], true)) {
                     continue;
                 }
 

@@ -172,11 +172,15 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 10 — Slip Gaji & Self-Service
 
-- [ ] **T-1001 (P0) Slip web** `/payslips/{id}` dengan tampilan dokumen A4 premium (PRD §8.2) dan tombol Cetak (`print:` styles).
-- [ ] **T-1002 (P0) Slip PDF** via Dompdf: view `payslips/pdf.php` dengan CSS inline/`<style>` biasa (tanpa Tailwind), logo base64, ukuran A4, nama file `Slip-Gaji-EMP-0014-2026-09.pdf`.
-- [ ] **T-1003 (P0) Otorisasi slip**: peran `employee` hanya untuk `employee_id` miliknya dan periode `paid`/`locked`; selain itu 403.
-- [ ] **T-1004 (P0) Self-service**: `/my` dashboard pribadi (THP terakhir, kehadiran bulan ini, sisa pinjaman) dan `/my/payslips` (list kartu per bulan + unduh).
-- [ ] **T-1005 (P2) Unduh massal** slip satu periode sebagai ZIP.
+- [x] **T-1001 (P0) Slip web** `/payslips/{id}` dengan tampilan dokumen A4 premium (PRD §8.2) dan tombol Cetak (`print:` styles).
+  - Saat dicetak hanya dokumen slip yang tampil (A4); slip periode yang belum dibayar diberi watermark DRAFT (pratinjau HR/Finance).
+- [x] **T-1002 (P0) Slip PDF** via Dompdf: view `payslips/pdf.php` dengan CSS inline/`<style>` biasa (tanpa Tailwind), logo base64, ukuran A4, nama file `Slip-Gaji-EMP-0014-2026-09.pdf`.
+  - Memakai font inti PDF (Helvetica): ±0,15 dtk dan ±6 KB per slip (DejaVu ±0,4 dtk / 42 KB). Logo dari setting `company.logo` (hanya berkas di folder public) atau logo bawaan SVG. Setiap unduhan tercatat di audit log.
+- [x] **T-1003 (P0) Otorisasi slip**: peran `employee` hanya untuk `employee_id` miliknya dan periode `paid`/`locked`; selain itu 403.
+  - ID slip yang tidak ada juga menghasilkan 403 untuk karyawan agar ID slip orang lain tidak bisa ditebak.
+- [x] **T-1004 (P0) Self-service**: `/my` dashboard pribadi (THP terakhir, kehadiran bulan ini, sisa pinjaman) dan `/my/payslips` (list kartu per bulan + unduh).
+  - Karyawan yang membuka `/dashboard` diarahkan ke `/my`; ada kalender kehadiran bulan ini, lembur, ringkasan tahunan (total gaji & PPh 21 untuk SPT), dan filter tahun pada daftar slip.
+- [x] **T-1005 (P2) Unduh massal** slip satu periode sebagai ZIP.
 
 ## Fase 11 — Laporan
 

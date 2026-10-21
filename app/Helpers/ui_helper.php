@@ -286,3 +286,21 @@ if (! function_exists('js_data')) {
         return esc(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), 'attr');
     }
 }
+
+if (! function_exists('attendance_cell_class')) {
+    /**
+     * Warna sel kalender kehadiran (rekap bulanan & dashboard pribadi).
+     */
+    function attendance_cell_class(string $status): string
+    {
+        return [
+            'present' => 'bg-emerald-100 text-emerald-800',
+            'late'    => 'bg-amber-200 text-amber-900',
+            'sick'    => 'bg-sky-200 text-sky-900',
+            'leave'   => 'bg-violet-200 text-violet-900',
+            'permit'  => 'bg-brand-200 text-brand-900',
+            'absent'  => 'bg-rose-600 text-white',
+            'holiday' => 'bg-slate-200 text-slate-700',
+        ][$status] ?? 'bg-slate-100 text-slate-600';
+    }
+}

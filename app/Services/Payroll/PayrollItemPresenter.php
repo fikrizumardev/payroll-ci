@@ -40,7 +40,7 @@ final class PayrollItemPresenter
         }
 
         if ($code === 'LOAN') {
-            return isset($meta['loan_no']) ? 'Pinjaman ' . $meta['loan_no'] : null;
+            return null; // nomor pinjaman sudah tercantum pada nama baris
         }
 
         if (isset($meta['qty'], $meta['rate'])) {

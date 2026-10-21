@@ -21,16 +21,6 @@ use App\Models\AttendanceModel;
 $this->extend('layouts/app');
 $this->section('content');
 
-$cell = [
-    'present' => 'bg-emerald-100 text-emerald-800',
-    'late'    => 'bg-amber-200 text-amber-900',
-    'sick'    => 'bg-sky-200 text-sky-900',
-    'leave'   => 'bg-violet-200 text-violet-900',
-    'permit'  => 'bg-brand-200 text-brand-900',
-    'absent'  => 'bg-rose-600 text-white',
-    'holiday' => 'bg-slate-200 text-slate-700',
-];
-
 $monthKey   = sprintf('%04d-%02d', $year, $month);
 $recapUrl   = static fn (string $m): string => url_to('attendance.recap') . '?' . http_build_query(array_filter(['month' => $m, 'department_id' => $departmentId ?: null]));
 $present    = array_sum(array_map(static fn (array $t): int => (int) $t['present'] + (int) $t['late'], $totals));
@@ -76,7 +66,7 @@ $totalCodes = ['present', 'late', 'sick', 'leave', 'permit', 'absent'];
     <ul class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-slate-600" aria-label="Keterangan warna">
         <?php foreach (AttendanceModel::STATUSES as $status => $label): ?>
             <li class="flex items-center gap-1.5">
-                <span class="flex size-5 items-center justify-center rounded text-[10px] font-bold <?= $cell[$status] ?>" aria-hidden="true"><?= AttendanceModel::CODES[$status] ?></span><?= esc($label) ?>
+                <span class="flex size-5 items-center justify-center rounded text-[10px] font-bold <?= attendance_cell_class($status) ?>" aria-hidden="true"><?= AttendanceModel::CODES[$status] ?></span><?= esc($label) ?>
             </li>
         <?php endforeach ?>
         <li class="flex items-center gap-1.5"><span class="size-5 rounded border border-dashed border-slate-300" aria-hidden="true"></span>Belum tercatat</li>
@@ -147,7 +137,7 @@ $totalCodes = ['present', 'late', 'sick', 'leave', 'permit', 'absent'];
                                 ?>
                                 <td class="border-b border-slate-100 p-0.5 text-center <?= $day['workday'] ? '' : 'bg-slate-50/80' ?>" <?= $tip ? 'data-tip="' . esc($tip, 'attr') . '"' : '' ?>>
                                     <?php if ($record): ?>
-                                        <span class="mx-auto flex size-6 items-center justify-center rounded text-[10px] font-bold <?= $cell[$record['status']] ?>" aria-hidden="true"><?= AttendanceModel::CODES[$record['status']] ?></span>
+                                        <span class="mx-auto flex size-6 items-center justify-center rounded text-[10px] font-bold <?= attendance_cell_class($record['status']) ?>" aria-hidden="true"><?= AttendanceModel::CODES[$record['status']] ?></span>
                                         <span class="sr-only"><?= esc(AttendanceModel::STATUSES[$record['status']]) ?></span>
                                     <?php elseif (! $employed): ?>
                                         <span class="mx-auto block size-6 rounded bg-[repeating-linear-gradient(135deg,#e2e8f0_0_2px,transparent_2px_6px)]" aria-hidden="true"></span>

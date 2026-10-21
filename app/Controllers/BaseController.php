@@ -60,6 +60,14 @@ abstract class BaseController extends Controller
      *
      * @param array<string, string> $errors
      */
+    /**
+     * Halaman 403 bertema aplikasi (dipakai untuk pengecekan kepemilikan data di controller).
+     */
+    protected function forbidden(): ResponseInterface
+    {
+        return $this->response->setStatusCode(403)->setBody(view('errors/html/error_403'));
+    }
+
     protected function backWithErrors(string $url, array $errors, ?string $modal = null): RedirectResponse
     {
         $redirect = redirect()->to($url)->withInput()->with('errors', $errors)

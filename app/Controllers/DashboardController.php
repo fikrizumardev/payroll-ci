@@ -10,6 +10,7 @@ use App\Models\EmployeeModel;
 use App\Models\HolidayModel;
 use App\Models\LoanModel;
 use App\Models\OvertimeModel;
+use CodeIgniter\HTTP\RedirectResponse;
 
 /**
  * Dashboard berbasis data nyata: ringkasan payroll, tren biaya, biaya per departemen,
@@ -20,10 +21,15 @@ class DashboardController extends BaseController
     /** Jumlah periode payroll terakhir pada grafik tren. */
     private const TREND_PERIODS = 6;
 
-    public function index(): string
+    public function index(): RedirectResponse|string
     {
         $user  = $this->currentUser();
         $today = date('Y-m-d');
+
+        // Karyawan memakai dashboard pribadi (/my)
+        if (! $this->auth->hasRole('hr', 'finance') && ! empty($user['employee_id'])) {
+            return redirect()->route('my.dashboard');
+        }
 
         $data = [
             'title'    => 'Dashboard',

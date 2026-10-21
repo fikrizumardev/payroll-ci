@@ -29,7 +29,7 @@ final class PayrollPresentationTest extends CIUnitTestCase
         $this->assertSame('TER A 2,5% × bruto Rp 10.608.600', PayrollItemPresenter::describe(['code' => 'PPH21', 'meta' => ['method' => 'ter', 'basis' => 10_608_600, 'category' => 'A', 'rate' => 2.5]]));
         $this->assertSame('Perhitungan setahun (masa pajak terakhir)', PayrollItemPresenter::describe(['code' => 'PPH21_REFUND', 'meta' => ['method' => 'annual']]));
         $this->assertSame('3,5 jam dalam 2 hari · pengali 6,5× · upah sejam Rp 52.023', PayrollItemPresenter::describe(['code' => 'OVERTIME', 'meta' => ['hours' => 3.5, 'days' => 2, 'multiplier' => 6.5, 'hourly_rate' => 52_023]]));
-        $this->assertSame('Pinjaman PJM-2026-0002', PayrollItemPresenter::describe(['code' => 'LOAN', 'meta' => ['loan_id' => 2, 'loan_no' => 'PJM-2026-0002']]));
+        $this->assertNull(PayrollItemPresenter::describe(['code' => 'LOAN', 'meta' => ['loan_id' => 2, 'loan_no' => 'PJM-2026-0002']]));
         $this->assertSame('Pencapaian target 112%', PayrollItemPresenter::describe(['code' => 'ADJ', 'meta' => ['note' => 'Pencapaian target 112%']]));
         $this->assertNull(PayrollItemPresenter::describe(['code' => 'POS_ALW', 'meta' => null]));
     }

@@ -55,7 +55,10 @@ final class LayoutTest extends CIUnitTestCase
 
     public function testEmployeeDashboardShowsOnlyPersonalData(): void
     {
-        $result = $this->actingAs('andi.pratama')->get('dashboard');
+        // Karyawan diarahkan ke dashboard pribadi
+        $this->actingAs('andi.pratama')->get('dashboard')->assertRedirectTo(site_url('my'));
+
+        $result = $this->actingAs('andi.pratama')->get('my');
 
         $result->assertOK();
         $result->assertSee('Andi Pratama');
@@ -70,7 +73,7 @@ final class LayoutTest extends CIUnitTestCase
         // Regresi: SUM(hours) = NULL sempat memicu error cast pada model
         $this->db->table('overtimes')->truncate();
 
-        $this->actingAs('andi.pratama')->get('dashboard')->assertOK();
+        $this->actingAs('andi.pratama')->get('my')->assertOK();
     }
 
     public function testUnbuiltModulesAreMarkedComingSoon(): void

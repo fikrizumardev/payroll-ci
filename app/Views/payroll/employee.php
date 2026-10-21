@@ -45,6 +45,7 @@ $sections   = [
 ];
 
 $actions = '<a href="' . url_to('payroll.show', $periodId) . '" class="btn btn-secondary">' . icon('arrow-left', 'size-4') . ' ' . esc($period['name']) . '</a>';
+$actions .= '<a href="' . url_to('payslips.show', $payroll['id']) . '" class="btn btn-secondary">' . icon('receipt-text', 'size-4') . ' Slip Gaji</a>';
 $actions .= '<div class="flex rounded-xl bg-white shadow-sm ring-1 ring-slate-300/80">'
     . ($prevId ? '<a href="' . esc($employeeUrl($prevId), 'attr') . '" class="rounded-l-xl px-3 py-2.5 text-slate-600 hover:bg-slate-50" aria-label="Karyawan sebelumnya">' . icon('chevron-left', 'size-4') . '</a>' : '<span class="px-3 py-2.5 text-slate-300" aria-hidden="true">' . icon('chevron-left', 'size-4') . '</span>')
     . '<span class="border-x border-slate-200 px-3 py-2.5 text-sm font-semibold text-slate-700 tabular-nums">' . (int) $position . ' / ' . $count . '</span>'

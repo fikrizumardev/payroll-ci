@@ -151,6 +151,9 @@ $kpis = [
                     <p class="mt-0.5 text-sm text-slate-500">Klik baris untuk melihat rincian komponen & cara hitung PPh 21. Generate terakhir <?= esc(tanggal_id($period['generated_at'], 'datetime')) ?>.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
+                    <a href="<?= url_to('payroll.payslips.zip', $id) ?>" class="btn btn-secondary py-2" title="PDF slip seluruh karyawan dalam satu berkas ZIP">
+                        <?= icon('file-archive', 'size-4') ?> Slip (ZIP)
+                    </a>
                     <div class="relative">
                         <label for="payroll-search" class="sr-only">Cari karyawan</label>
                         <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500"><?= icon('search', 'size-4') ?></span>
