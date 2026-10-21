@@ -31,6 +31,55 @@
         },
     };
 
+    /**
+     * State halaman CRUD dengan modal tambah/ubah.
+     * `reopen` ('create' | 'edit:ID') + `old` membuka ulang modal setelah validasi gagal.
+     */
+    function crudModal({ empty, items = {}, storeUrl, updateUrl, reopen = null, old = null }) {
+        return {
+            modalOpen: false,
+            submitting: false,
+            mode: 'create',
+            form: { ...empty },
+            action: storeUrl,
+
+            create() {
+                this.mode = 'create';
+                this.form = { ...empty };
+                this.action = storeUrl;
+                this.open();
+            },
+
+            edit(id) {
+                this.mode = 'edit';
+                this.form = { ...empty, ...(items[id] ?? {}) };
+                this.action = updateUrl.replace('__ID__', id);
+                this.open();
+            },
+
+            open() {
+                this.submitting = false;
+                this.modalOpen = true;
+                this.$nextTick(() => {
+                    window.PayrollKu.refreshIcons();
+                    this.$root.querySelector('[role=dialog] input:not([type=hidden]), [role=dialog] select')?.focus();
+                });
+            },
+
+            init() {
+                if (!reopen) return;
+                reopen.startsWith('edit:') ? this.edit(reopen.slice(5)) : this.create();
+                if (!old) return;
+                const restored = { ...old };
+                // Checkbox terkirim sebagai '0' / '1' → kembalikan ke boolean
+                Object.keys(empty).forEach((key) => {
+                    if (typeof empty[key] === 'boolean' && key in restored) restored[key] = restored[key] === '1';
+                });
+                this.form = { ...this.form, ...restored };
+            },
+        };
+    }
+
     /** State shell aplikasi: sidebar ringkas, drawer mobile, command palette. */
     function appShell(links = []) {
         return {

@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Pesan validasi Bahasa Indonesia. {field} = label kolom, {param} = parameter aturan.
+ */
+return [
+    'noRuleSets'      => 'Aturan validasi belum ditentukan.',
+    'ruleNotFound'    => '"{0}" bukan aturan validasi yang valid.',
+    'groupNotFound'   => '"{0}" bukan grup aturan validasi.',
+    'groupNotArray'   => 'Grup aturan "{0}" harus berupa array.',
+    'invalidTemplate' => '"{0}" bukan template validasi yang valid.',
+
+    'alpha'                 => '{field} hanya boleh berisi huruf.',
+    'alpha_dash'            => '{field} hanya boleh berisi huruf, angka, garis bawah, dan tanda hubung.',
+    'alpha_numeric'         => '{field} hanya boleh berisi huruf dan angka.',
+    'alpha_numeric_punct'   => '{field} berisi karakter yang tidak diizinkan.',
+    'alpha_numeric_space'   => '{field} hanya boleh berisi huruf, angka, dan spasi.',
+    'alpha_space'           => '{field} hanya boleh berisi huruf dan spasi.',
+    'decimal'               => '{field} harus berupa angka desimal.',
+    'differs'               => '{field} harus berbeda dari {param}.',
+    'equals'                => '{field} harus bernilai {param}.',
+    'exact_length'          => '{field} harus tepat {param} karakter.',
+    'field_exists'          => '{field} wajib ada.',
+    'greater_than'          => '{field} harus lebih besar dari {param}.',
+    'greater_than_equal_to' => '{field} minimal {param}.',
+    'hex'                   => '{field} hanya boleh berisi karakter heksadesimal.',
+    'in_list'               => '{field} harus salah satu dari: {param}.',
+    'integer'               => '{field} harus berupa bilangan bulat.',
+    'is_natural'            => '{field} hanya boleh berisi angka.',
+    'is_natural_no_zero'    => '{field} harus berupa angka lebih dari nol.',
+    'is_not_unique'         => '{field} yang dipilih tidak ditemukan.',
+    'is_unique'             => '{field} sudah dipakai.',
+    'less_than'             => '{field} harus kurang dari {param}.',
+    'less_than_equal_to'    => '{field} maksimal {param}.',
+    'matches'               => '{field} tidak sama dengan {param}.',
+    'max_length'            => '{field} maksimal {param} karakter.',
+    'min_length'            => '{field} minimal {param} karakter.',
+    'not_equals'            => '{field} tidak boleh bernilai {param}.',
+    'not_in_list'           => '{field} tidak boleh salah satu dari: {param}.',
+    'numeric'               => '{field} hanya boleh berisi angka.',
+    'regex_match'           => 'Format {field} tidak valid.',
+    'required'              => '{field} wajib diisi.',
+    'required_with'         => '{field} wajib diisi bila {param} diisi.',
+    'required_without'      => '{field} wajib diisi bila {param} kosong.',
+    'string'                => '{field} harus berupa teks.',
+    'timezone'              => '{field} harus zona waktu yang valid.',
+    'valid_base64'          => '{field} harus string base64 yang valid.',
+    'valid_ip'              => '{field} harus alamat IP yang valid.',
+    'valid_url'             => '{field} harus URL yang valid.',
+    'valid_url_strict'      => '{field} harus URL yang valid.',
+    'valid_date'            => '{field} harus tanggal yang valid.',
+    'valid_json'            => '{field} harus JSON yang valid.',
+
+    'uploaded' => '{field} bukan berkas unggahan yang valid.',
+    'max_size' => 'Ukuran {field} terlalu besar.',
+    'is_image' => '{field} harus berupa gambar.',
+    'mime_in'  => 'Tipe berkas {field} tidak diizinkan.',
+    'ext_in'   => 'Ekstensi berkas {field} tidak diizinkan.',
+];

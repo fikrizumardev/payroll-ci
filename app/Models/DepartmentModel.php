@@ -21,10 +21,10 @@ class DepartmentModel extends Model
 
     protected $validationRules = [
         'id'               => 'permit_empty|is_natural_no_zero',
-        'code'             => 'required|alpha_numeric|max_length[10]|is_unique[departments.code,id,{id}]',
-        'name'             => 'required|max_length[100]',
-        'description'      => 'permit_empty|max_length[255]',
-        'head_employee_id' => 'permit_empty|is_natural_no_zero',
+        'code'             => ['label' => 'Kode', 'rules' => 'required|alpha_numeric|max_length[10]|is_unique[departments.code,id,{id}]'],
+        'name'             => ['label' => 'Nama departemen', 'rules' => 'required|max_length[100]'],
+        'description'      => ['label' => 'Deskripsi', 'rules' => 'permit_empty|max_length[255]'],
+        'head_employee_id' => ['label' => 'Kepala departemen', 'rules' => 'permit_empty|is_natural_no_zero|is_not_unique[employees.id]'],
     ];
 
     protected $validationMessages = [

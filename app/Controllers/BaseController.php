@@ -6,6 +6,7 @@ use App\Services\Auth\AuthService;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
+use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -42,5 +43,60 @@ abstract class BaseController extends Controller
     protected function currentUser(): ?array
     {
         return $this->auth->user();
+    }
+
+    /**
+     * Apakah user boleh mengubah data master (HR; Super Admin selalu boleh).
+     */
+    protected function canManage(): bool
+    {
+        return $this->auth->hasRole('hr');
+    }
+
+    /**
+     * Kembali ke halaman form dengan error validasi + input lama.
+     * `$modal` dipakai halaman CRUD-modal untuk membuka ulang modal yang sama.
+     *
+     * @param array<string, string> $errors
+     */
+    protected function backWithErrors(string $url, array $errors, ?string $modal = null): RedirectResponse
+    {
+        $redirect = redirect()->to($url)->withInput()->with('errors', $errors)
+            ->with('error', 'Data belum bisa disimpan. Periksa kembali isian yang ditandai.');
+
+        return $modal === null ? $redirect : $redirect->with('open_modal', $modal);
+    }
+
+    /**
+     * @param array<string, mixed>|null $before
+     * @param array<string, mixed>|null $after
+     */
+    protected function audit(string $action, string $entity, int|string|null $entityId, string $description, ?array $before = null, ?array $after = null): void
+    {
+        service('auditLogger')->log($action, $entity, $entityId, $description, $before, $after);
+    }
+
+    /**
+     * Ambil hanya kolom yang berubah (untuk audit log before/after).
+     *
+     * @param array<string, mixed> $before
+     * @param array<string, mixed> $after
+     *
+     * @return array{0: array<string, mixed>, 1: array<string, mixed>}
+     */
+    protected function diff(array $before, array $after): array
+    {
+        $old       = [];
+        $new       = [];
+        $normalize = static fn (mixed $value): string => is_bool($value) ? (string) (int) $value : (string) ($value ?? '');
+
+        foreach ($after as $key => $value) {
+            if (array_key_exists($key, $before) && $normalize($before[$key]) !== $normalize($value)) {
+                $old[$key] = $before[$key];
+                $new[$key] = $value;
+            }
+        }
+
+        return [$old, $new];
     }
 }

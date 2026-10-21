@@ -42,8 +42,8 @@ class EmployeeModel extends Model
 
     protected array $casts = [
         'id'                => 'int',
-        'department_id'     => 'int',
-        'position_id'       => 'int',
+        'department_id'     => '?int',
+        'position_id'       => '?int',
         'basic_salary'      => 'int',
         'bpjs_kes_enrolled' => 'bool',
         'bpjs_tk_enrolled'  => 'bool',
@@ -51,25 +51,26 @@ class EmployeeModel extends Model
 
     protected $validationRules = [
         'id'                => 'permit_empty|is_natural_no_zero',
-        'nip'               => 'required|max_length[20]|is_unique[employees.nip,id,{id}]',
-        'full_name'         => 'required|min_length[3]|max_length[150]',
-        'nik'               => 'required|exact_length[16]|numeric|is_unique[employees.nik,id,{id}]',
-        'npwp'              => 'permit_empty|min_length[15]|max_length[16]|numeric',
-        'gender'            => 'required|in_list[L,P]',
-        'birth_place'       => 'permit_empty|max_length[100]',
-        'birth_date'        => 'permit_empty|valid_date[Y-m-d]',
-        'phone'             => 'permit_empty|max_length[20]|regex_match[/^[0-9+\- ]+$/]',
-        'department_id'     => 'required|is_natural_no_zero|is_not_unique[departments.id]',
-        'position_id'       => 'required|is_natural_no_zero|is_not_unique[positions.id]',
-        'employment_type'   => 'required|in_list[permanent,contract,probation]',
-        'status'            => 'required|in_list[active,resigned,terminated]',
-        'join_date'         => 'required|valid_date[Y-m-d]',
-        'resign_date'       => 'permit_empty|valid_date[Y-m-d]',
-        'ptkp_status'       => 'required|in_list[TK/0,TK/1,TK/2,TK/3,K/0,K/1,K/2,K/3]',
-        'basic_salary'      => 'required|is_natural',
-        'bank_name'         => 'permit_empty|max_length[50]',
-        'bank_account_no'   => 'permit_empty|numeric|max_length[30]',
-        'bank_account_name' => 'permit_empty|max_length[150]',
+        'nip'               => ['label' => 'NIP', 'rules' => 'required|max_length[20]|is_unique[employees.nip,id,{id}]'],
+        'full_name'         => ['label' => 'Nama lengkap', 'rules' => 'required|min_length[3]|max_length[150]'],
+        'nik'               => ['label' => 'NIK', 'rules' => 'required|exact_length[16]|numeric|is_unique[employees.nik,id,{id}]'],
+        'npwp'              => ['label' => 'NPWP', 'rules' => 'permit_empty|min_length[15]|max_length[16]|numeric'],
+        'gender'            => ['label' => 'Jenis kelamin', 'rules' => 'required|in_list[L,P]'],
+        'birth_place'       => ['label' => 'Tempat lahir', 'rules' => 'permit_empty|max_length[100]'],
+        'birth_date'        => ['label' => 'Tanggal lahir', 'rules' => 'permit_empty|valid_date[Y-m-d]'],
+        'phone'             => ['label' => 'No. HP', 'rules' => 'permit_empty|max_length[20]|regex_match[/^[0-9+\- ]+$/]'],
+        'address'           => ['label' => 'Alamat', 'rules' => 'permit_empty|max_length[500]'],
+        'department_id'     => ['label' => 'Departemen', 'rules' => 'required|is_natural_no_zero|is_not_unique[departments.id]'],
+        'position_id'       => ['label' => 'Jabatan', 'rules' => 'required|is_natural_no_zero|is_not_unique[positions.id]'],
+        'employment_type'   => ['label' => 'Status kerja', 'rules' => 'required|in_list[permanent,contract,probation]'],
+        'status'            => ['label' => 'Status karyawan', 'rules' => 'required|in_list[active,resigned,terminated]'],
+        'join_date'         => ['label' => 'Tanggal masuk', 'rules' => 'required|valid_date[Y-m-d]'],
+        'resign_date'       => ['label' => 'Tanggal keluar', 'rules' => 'permit_empty|valid_date[Y-m-d]'],
+        'ptkp_status'       => ['label' => 'Status PTKP', 'rules' => 'required|in_list[TK/0,TK/1,TK/2,TK/3,K/0,K/1,K/2,K/3]'],
+        'basic_salary'      => ['label' => 'Gaji pokok', 'rules' => 'required|is_natural_no_zero'],
+        'bank_name'         => ['label' => 'Nama bank', 'rules' => 'permit_empty|max_length[50]'],
+        'bank_account_no'   => ['label' => 'No. rekening', 'rules' => 'permit_empty|numeric|min_length[6]|max_length[30]'],
+        'bank_account_name' => ['label' => 'Nama pemilik rekening', 'rules' => 'permit_empty|max_length[150]'],
     ];
 
     protected $validationMessages = [
@@ -111,8 +112,10 @@ class EmployeeModel extends Model
 
     public function nextNip(): string
     {
-        $last = $this->withDeleted()->selectMax('nip')->first();
-        $next = $last['nip'] === null ? 1 : ((int) substr($last['nip'], 4)) + 1;
+        // Query builder langsung (termasuk data terhapus). Model::first() pada model soft-delete
+        // menambahkan GROUP BY primary key sehingga MAX() menjadi salah.
+        $last = $this->db->table($this->table)->selectMax('nip')->get()->getRowArray();
+        $next = ($last['nip'] ?? null) === null ? 1 : ((int) substr($last['nip'], 4)) + 1;
 
         return sprintf('EMP-%04d', $next);
     }

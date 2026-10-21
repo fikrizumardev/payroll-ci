@@ -26,9 +26,9 @@ class HolidayModel extends Model
 
     protected $validationRules = [
         'id'   => 'permit_empty|is_natural_no_zero',
-        'date' => 'required|valid_date[Y-m-d]|is_unique[holidays.date,id,{id}]',
-        'name' => 'required|max_length[150]',
-        'type' => 'required|in_list[national,collective_leave,company]',
+        'date' => ['label' => 'Tanggal', 'rules' => 'required|valid_date[Y-m-d]|is_unique[holidays.date,id,{id}]'],
+        'name' => ['label' => 'Keterangan', 'rules' => 'required|max_length[150]'],
+        'type' => ['label' => 'Jenis libur', 'rules' => 'required|in_list[national,collective_leave,company]'],
     ];
 
     /**

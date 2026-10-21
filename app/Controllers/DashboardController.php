@@ -12,11 +12,14 @@ use App\Models\LoanModel;
 use App\Models\OvertimeModel;
 
 /**
- * Dashboard ringkas berbasis data nyata. Grafik & ringkasan payroll
- * ditambahkan bersama modul payroll (TASKS T-701).
+ * Dashboard berbasis data nyata: ringkasan payroll, tren biaya, biaya per departemen,
+ * kehadiran, dan aktivitas (perusahaan) serta ringkasan pribadi (karyawan).
  */
 class DashboardController extends BaseController
 {
+    /** Jumlah periode payroll terakhir pada grafik tren. */
+    private const TREND_PERIODS = 6;
+
     public function index(): string
     {
         $user  = $this->currentUser();
@@ -31,6 +34,8 @@ class DashboardController extends BaseController
 
         if ($this->auth->hasRole('hr', 'finance')) {
             $data += $this->companySummary($today);
+            $data['payroll'] = $this->payrollSummary();
+            $data['people']  = $this->peopleHighlights($today);
         }
 
         if (! empty($user['employee_id'])) {
@@ -95,8 +100,97 @@ class DashboardController extends BaseController
                 'attendanceTrend' => $trend,
                 'pendingOvertime' => ['total' => (int) $overtime['total'], 'hours' => (float) $overtime['total_hours']],
                 'activeLoans'     => ['total' => (int) $loans['total'], 'remaining' => (int) $loans['remaining']],
+                'pendingLoans'    => (new LoanModel())->where('status', 'pending')->countAllResults(),
             ],
             'activities' => (new AuditLogModel())->recent(6),
+        ];
+    }
+
+    /**
+     * Ringkasan payroll: tren beberapa periode terakhir, KPI periode terbaru
+     * beserta perubahan terhadap periode sebelumnya, dan biaya per departemen.
+     *
+     * @return array<string, mixed>
+     */
+    private function payrollSummary(): array
+    {
+        $db = db_connect();
+
+        $periods = array_reverse($db->table('payroll_periods pp')
+            ->select('pp.id, pp.name, pp.year, pp.month, pp.status, pp.pay_date, COUNT(p.id) AS employees')
+            ->select('COALESCE(SUM(p.take_home_pay), 0) AS thp, COALESCE(SUM(p.pph21), 0) AS pph21')
+            ->select('COALESCE(SUM(p.bpjs_employee_total), 0) AS bpjs_employee, COALESCE(SUM(p.bpjs_company_total), 0) AS bpjs_company')
+            ->select('COALESCE(SUM(p.total_earning), 0) AS total_earning')
+            ->join('payrolls p', 'p.period_id = pp.id', 'left')
+            ->groupBy('pp.id')
+            ->orderBy('pp.year', 'DESC')->orderBy('pp.month', 'DESC')
+            ->limit(self::TREND_PERIODS)
+            ->get()->getResultArray());
+
+        foreach ($periods as &$period) {
+            foreach (['employees', 'thp', 'pph21', 'bpjs_employee', 'bpjs_company', 'total_earning'] as $key) {
+                $period[$key] = (int) $period[$key];
+            }
+
+            // Biaya perusahaan = seluruh pendapatan karyawan + iuran BPJS porsi perusahaan
+            $period['employer_cost'] = $period['total_earning'] + $period['bpjs_company'];
+        }
+        unset($period);
+
+        $latest   = $periods === [] ? null : $periods[array_key_last($periods)];
+        $previous = count($periods) > 1 ? $periods[count($periods) - 2] : null;
+        $delta    = static fn (string $key): ?float => $previous === null || $previous[$key] === 0
+            ? null
+            : round(($latest[$key] - $previous[$key]) / $previous[$key] * 100, 1);
+
+        $departments = [];
+
+        if ($latest !== null) {
+            $departments = $db->table('payrolls')
+                ->select("JSON_UNQUOTE(JSON_EXTRACT(snapshot, '$.department')) AS department", false)
+                ->select('COUNT(*) AS employees, SUM(total_earning + bpjs_company_total) AS cost, SUM(take_home_pay) AS thp')
+                ->where('period_id', $latest['id'])
+                ->groupBy('department')
+                ->orderBy('cost', 'DESC')
+                ->get()->getResultArray();
+        }
+
+        return [
+            'periods'     => $periods,
+            'latest'      => $latest,
+            'previous'    => $previous,
+            'deltas'      => $latest === null ? [] : [
+                'thp'           => $delta('thp'),
+                'pph21'         => $delta('pph21'),
+                'employer_cost' => $delta('employer_cost'),
+            ],
+            'departments' => array_map(static fn (array $row): array => [
+                'department' => $row['department'],
+                'employees'  => (int) $row['employees'],
+                'cost'       => (int) $row['cost'],
+                'thp'        => (int) $row['thp'],
+            ], $departments),
+        ];
+    }
+
+    /**
+     * Karyawan baru & yang berulang tahun bulan ini.
+     *
+     * @return array{newHires: list<array<string, mixed>>, birthdays: list<array<string, mixed>>}
+     */
+    private function peopleHighlights(string $today): array
+    {
+        $month = (int) date('n', strtotime($today));
+
+        return [
+            'newHires' => (new EmployeeModel())->withRelations()->active()
+                ->where('employees.join_date >=', date('Y-m-d', strtotime($today . ' -90 days')))
+                ->orderBy('employees.join_date', 'DESC')
+                ->findAll(3),
+            'birthdays' => (new EmployeeModel())->withRelations()->active()
+                ->where('MONTH(employees.birth_date)', $month, false)
+                ->orderBy('DAY(employees.birth_date)', 'ASC', false)
+                ->findAll(5),
         ];
     }
 

@@ -124,17 +124,20 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 7 — Modul Master Data
 
-- [ ] **T-701 (P0) Dashboard** admin/HR/finance sesuai PRD F1. Semua angka dari query nyata, grafik tren 6 bulan (Chart.js area gradien), dan donut per departemen.
-- [ ] **T-702 (P0) Departemen**: list + CRUD dalam modal, kepala departemen ditampilkan dengan avatar, dan jumlah karyawan per departemen.
-- [ ] **T-703 (P0) Jabatan**: list dikelompokkan per departemen beserta range gaji.
-- [ ] **T-704 (P0) Karyawan**:
+- [x] **T-701 (P0) Dashboard** admin/HR/finance sesuai PRD F1. Semua angka dari query nyata.
+  - Grafik **kolom bertumpuk** komposisi biaya payroll ≤ 6 periode (gaji bersih · PPh 21 + BPJS karyawan · BPJS perusahaan) dengan legenda, tooltip, label total, dan tampilan tabel. Palet divalidasi (CVD ΔE ≥ 9,2).
+  - Biaya per departemen memakai **bar horizontal berurutan satu warna**, bukan donut, agar 6 kategori mudah dibandingkan dan dilabeli langsung.
+- [x] **T-702 (P0) Departemen**: list + CRUD dalam modal, kepala departemen ditampilkan dengan avatar, dan jumlah karyawan per departemen.
+- [x] **T-703 (P0) Jabatan**: list dikelompokkan per departemen beserta range gaji.
+- [x] **T-704 (P0) Karyawan**:
   - List: pencarian (nama/NIP), filter departemen/status/tipe, avatar inisial, badge status, NIK disamarkan, paginasi 25, ekspor CSV.
   - Form multi-section (Data Pribadi, Kepegawaian, Gaji & Pajak, Rekening Bank) dengan validasi dan auto-isi gaji/tunjangan dari jabatan.
   - Detail: header profil dengan gradien, tab (Profil · Komponen Gaji · Kehadiran · Pinjaman · Riwayat Gaji).
   - Aksi resign: set `resign_date` & status, lalu nonaktifkan user terkait.
-- [ ] **T-705 (P0) Komponen Gaji**: CRUD (komponen `is_system` tidak bisa dihapus) dan override nominal per karyawan.
-- [ ] **T-706 (P1) Hari Libur**: CRUD dengan tampilan kalender tahunan.
-- [ ] **T-707 (P0) Pengaturan**: tab Perusahaan · BPJS · Pajak (PTKP & TER read-only/editable oleh superadmin) · Kehadiran. Setiap perubahan dicatat di audit log.
+  - Tambahan: opsi buat akun login otomatis saat menambah karyawan; karyawan tidak dihapus (riwayat payroll/pajak), cukup resign/diberhentikan; NIK/NPWP/rekening disamarkan di audit log.
+- [x] **T-705 (P0) Komponen Gaji**: CRUD (komponen `is_system` tidak bisa dihapus) dan override nominal per karyawan.
+- [x] **T-706 (P1) Hari Libur**: CRUD dengan tampilan kalender tahunan.
+- [x] **T-707 (P0) Pengaturan**: tab Perusahaan · BPJS · Pajak (PTKP & TER, dapat diubah Super Admin) · Payroll & Kehadiran. HR & Finance hanya melihat. Setiap perubahan dicatat di audit log.
 
 ## Fase 8 — Kehadiran, Lembur, Pinjaman
 

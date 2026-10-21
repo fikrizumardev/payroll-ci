@@ -90,7 +90,7 @@ Tiga syarat utama dari pemilik produk:
 ## 5. Kebutuhan Fungsional
 
 ### F1. Dashboard
-- **Admin/HR/Finance:** kartu KPI (Total Karyawan Aktif, Total Gaji Bersih bulan berjalan, Total BPJS (perusahaan + karyawan), Total PPh 21), grafik tren biaya payroll 6 bulan (Chart.js, area chart), donut distribusi biaya per departemen, tabel "Periode Payroll Terakhir" dengan badge status, kehadiran hari ini (hadir/izin/sakit/alpha), karyawan baru & ulang tahun bulan ini, aktivitas terbaru (dari audit log).
+- **Admin/HR/Finance:** kartu KPI (Total Karyawan Aktif, Total Gaji Bersih bulan berjalan, Total BPJS (perusahaan + karyawan), Total PPh 21), grafik kolom bertumpuk komposisi biaya payroll ≤ 6 periode (Chart.js, dengan tampilan tabel), bar horizontal biaya per departemen, tabel "Periode Payroll Terakhir" dengan badge status, kehadiran hari ini (hadir/izin/sakit/alpha), karyawan baru & ulang tahun bulan ini, aktivitas terbaru (dari audit log).
 - **Karyawan:** sapaan personal, take home pay bulan terakhir, rekap kehadiran bulan berjalan, sisa pinjaman, daftar slip gaji terbaru.
 
 ### F2. Master Data

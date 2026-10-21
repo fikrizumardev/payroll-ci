@@ -9,16 +9,20 @@
  * @var bool|null       $required
  * @var string|null     $error
  * @var string|null     $placeholder
+ * @var string|null     $model       ekspresi Alpine untuk binding dua arah (x-modelable)
+ * @var string|null     $id
  */
 $value       ??= null;
 $help        ??= null;
 $required    ??= false;
 $placeholder ??= '0';
 $error       ??= (session('errors') ?? [])[$name] ?? null;
-$id          = 'field-' . preg_replace('/[^a-z0-9_-]/i', '-', $name);
+$model       ??= null;
+$id          ??= 'field-' . preg_replace('/[^a-z0-9_-]/i', '-', $name);
 $raw         = preg_replace('/\D/', '', (string) old($name, $value, false));
 ?>
-<div x-data="{ raw: '<?= esc($raw, 'js') ?>', get display() { return PayrollKu.formatNumber(this.raw) } }">
+<div x-data="{ raw: '<?= esc($raw, 'js') ?>', get display() { return PayrollKu.formatNumber(this.raw) } }"
+     <?= $model ? 'x-modelable="raw" x-model="' . esc($model, 'attr') . '"' : '' ?>>
     <label for="<?= esc($id, 'attr') ?>" class="form-label">
         <?= esc($label) ?><?php if ($required): ?> <span class="text-rose-500" aria-hidden="true">*</span><?php endif ?>
     </label>

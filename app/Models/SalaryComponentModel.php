@@ -46,12 +46,13 @@ class SalaryComponentModel extends Model
 
     protected $validationRules = [
         'id'             => 'permit_empty|is_natural_no_zero',
-        'code'           => 'required|max_length[30]|regex_match[/^[A-Z0-9_]+$/]|is_unique[salary_components.code,id,{id}]',
-        'name'           => 'required|max_length[100]',
-        'type'           => 'required|in_list[earning,deduction,company_contribution]',
-        'calc_type'      => 'required|in_list[fixed,daily,formula,manual]',
-        'default_amount' => 'permit_empty|is_natural',
-        'sort_order'     => 'permit_empty|is_natural',
+        'code'           => ['label' => 'Kode', 'rules' => 'required|max_length[30]|regex_match[/^[A-Z0-9_]+$/]|is_unique[salary_components.code,id,{id}]'],
+        'name'           => ['label' => 'Nama komponen', 'rules' => 'required|max_length[100]'],
+        'type'           => ['label' => 'Tipe', 'rules' => 'required|in_list[earning,deduction,company_contribution]'],
+        'calc_type'      => ['label' => 'Cara hitung', 'rules' => 'required|in_list[fixed,daily,formula,manual]'],
+        'default_amount' => ['label' => 'Nominal default', 'rules' => 'permit_empty|is_natural'],
+        'sort_order'     => ['label' => 'Urutan', 'rules' => 'permit_empty|is_natural|less_than_equal_to[999]'],
+        'description'    => ['label' => 'Deskripsi', 'rules' => 'permit_empty|max_length[255]'],
     ];
 
     public function findByCode(string $code): ?array

@@ -24,9 +24,12 @@ $current     = (string) old($name, $value, false);
 $extra = '';
 
 foreach ($attrs as $attr => $attrValue) {
-    if ($attr !== 'id') {
-        $extra .= ' ' . esc($attr, 'attr') . '="' . esc((string) $attrValue, 'attr') . '"';
+    // Nama atribut divalidasi (bukan di-escape) agar directive Alpine seperti @change / :disabled tetap utuh
+    if ($attr === 'id' || ! preg_match('/^[@:a-zA-Z_][\w:.@-]*$/', (string) $attr)) {
+        continue;
     }
+
+    $extra .= ' ' . $attr . '="' . esc((string) $attrValue, 'attr') . '"';
 }
 ?>
 <div>

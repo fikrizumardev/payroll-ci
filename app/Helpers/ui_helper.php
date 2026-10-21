@@ -256,3 +256,33 @@ if (! function_exists('nav_is_active')) {
         return $current === $target || str_starts_with($current, rtrim($target, '/') . '/');
     }
 }
+
+if (! function_exists('old_input')) {
+    /**
+     * Seluruh input POST lama (setelah redirect()->withInput()), tanpa token CSRF.
+     *
+     * @return array<string, mixed>|null
+     */
+    function old_input(): ?array
+    {
+        $old = session('_ci_old_input')['post'] ?? null;
+
+        if (! is_array($old) || $old === []) {
+            return null;
+        }
+
+        unset($old[config('Security')->tokenName]);
+
+        return $old;
+    }
+}
+
+if (! function_exists('js_data')) {
+    /**
+     * Encode data PHP menjadi literal JSON yang aman ditaruh di atribut HTML (x-data).
+     */
+    function js_data(mixed $data): string
+    {
+        return esc(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), 'attr');
+    }
+}
