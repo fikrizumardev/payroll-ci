@@ -73,13 +73,14 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 4 — Autentikasi Username + Password
 
-- [ ] **T-401 (P0) `AuthService`**: `attempt(username, password, remember)`, `logout()`, `user()`, `check()`, `changePassword()`. Normalisasi username dengan `strtolower(trim())`. Gunakan `password_verify` dan `password_needs_rehash`. Kelola `failed_attempts`/`locked_until`. Panggil `session()->regenerate(true)`.
-- [ ] **T-402 (P0) `AuthController`**: `GET /login`, `POST /login` (validasi: username `required|regex_match[/^[a-z0-9._]{4,30}$/i]`, password `required`), `POST /logout`. Pakai Throttler maks 5 request/menit per IP+username.
-- [ ] **T-403 (P0) Filter**: `AuthFilter` (redirect ke `/login`, cek `is_active`, paksa redirect ke ganti password jika `must_change_password`) dan `RoleFilter` (`role:hr,superadmin` → 403 jika tidak cocok). Daftarkan di `Config/Filters.php`. CSRF diaktifkan global.
-- [ ] **T-404 (P0) Halaman Login premium**: layout `auth.php` split screen sesuai PRD §8.2. Field **Username** (ikon user, autocomplete `username`) dan **Password** (toggle show/hide via Alpine), "Ingat saya", pesan error generik, loading state pada tombol.
-- [ ] **T-405 (P1) Remember me**: token di cookie `HttpOnly; SameSite=Lax`, hash disimpan di `user_tokens`, dan dirotasi saat dipakai.
-- [ ] **T-406 (P0) Ganti password** `/account/password`: password lama, password baru, konfirmasi.
-- [ ] **T-407 (P0) Audit**: login sukses/gagal/logout tercatat.
+- [x] **T-401 (P0) `AuthService`**: `attempt(username, password, remember)`, `logout()`, `user()`, `check()`, `changePassword()`. Normalisasi username dengan `strtolower(trim())`. Gunakan `password_verify` dan `password_needs_rehash`. Kelola `failed_attempts`/`locked_until`. Panggil `session()->regenerate(true)`.
+- [x] **T-402 (P0) `AuthController`**: `GET /login`, `POST /login` (validasi: username `required|regex_match[/^[a-z0-9._]{4,30}$/i]`, password `required`), `POST /logout`. Pakai Throttler maks 5 request/menit per IP+username.
+  - Gagal login tidak memakai `withInput()` (agar password tidak tersimpan di flash session); hanya username yang di-flash. Throttler tambahan 20 percobaan/menit per IP.
+- [x] **T-403 (P0) Filter**: `AuthFilter` (redirect ke `/login`, cek `is_active`, paksa redirect ke ganti password jika `must_change_password`) dan `RoleFilter` (`role:hr,superadmin` → 403 jika tidak cocok). Daftarkan di `Config/Filters.php`. CSRF diaktifkan global.
+- [x] **T-404 (P0) Halaman Login premium**: layout `auth.php` split screen sesuai PRD §8.2. Field **Username** (ikon user, autocomplete `username`) dan **Password** (toggle show/hide via Alpine), "Ingat saya", pesan error generik, loading state pada tombol.
+- [x] **T-405 (P1) Remember me**: token di cookie `HttpOnly; SameSite=Lax`, hash disimpan di `user_tokens`, dan dirotasi saat dipakai.
+- [x] **T-406 (P0) Ganti password** `/account/password`: password lama, password baru, konfirmasi.
+- [x] **T-407 (P0) Audit**: login sukses/gagal/logout tercatat.
 - AC fase: login `admin`/`Admin#2026` sukses; 6× gagal dalam 1 menit menghasilkan 429; user nonaktif ditolak; tidak ada string "email" di form maupun tabel; feature test `AuthTest` lulus.
 
 ## Fase 5 — Layout & UI Kit (Tailwind CDN)

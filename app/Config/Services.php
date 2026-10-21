@@ -2,6 +2,10 @@
 
 namespace Config;
 
+use App\Models\UserModel;
+use App\Models\UserTokenModel;
+use App\Services\AuditLogger;
+use App\Services\Auth\AuthService;
 use App\Services\SettingService;
 use CodeIgniter\Config\BaseService;
 
@@ -30,5 +34,29 @@ class Services extends BaseService
         }
 
         return new SettingService();
+    }
+
+    /**
+     * Autentikasi username + password berbasis session.
+     */
+    public static function auth(bool $getShared = true): AuthService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('auth');
+        }
+
+        return new AuthService(new UserModel(), new UserTokenModel(), service('auditLogger'), service('session'));
+    }
+
+    /**
+     * Pencatat jejak aktivitas (tabel audit_logs).
+     */
+    public static function auditLogger(bool $getShared = true): AuditLogger
+    {
+        if ($getShared) {
+            return static::getSharedInstance('auditLogger');
+        }
+
+        return new AuditLogger();
     }
 }

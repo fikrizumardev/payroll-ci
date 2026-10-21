@@ -2,6 +2,10 @@
 
 namespace Config;
 
+use App\Filters\AuthFilter;
+use App\Filters\GuestFilter;
+use App\Filters\RememberCookieFilter;
+use App\Filters\RoleFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -34,6 +38,10 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'auth'          => AuthFilter::class,
+        'guest'         => GuestFilter::class,
+        'role'          => RoleFilter::class,
+        'remember'      => RememberCookieFilter::class,
     ];
 
     /**
@@ -72,13 +80,12 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // 'honeypot',
-            // 'csrf',
-            // 'invalidchars',
+            'csrf',
+            'invalidchars',
         ],
         'after' => [
-            // 'honeypot',
-            // 'secureheaders',
+            'secureheaders',
+            'remember',
         ],
     ];
 

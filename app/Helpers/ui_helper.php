@@ -148,7 +148,7 @@ if (! function_exists('avatar')) {
      */
     function avatar(?string $name, string $size = 'size-9 text-xs'): string
     {
-        return '<span class="inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br '
+        return '<span class="inline-flex shrink-0 items-center justify-center rounded-full bg-linear-to-br '
             . avatar_color($name) . ' ' . $size . ' font-semibold text-white shadow-sm ring-2 ring-white" aria-hidden="true">'
             . esc(initials($name)) . '</span>';
     }
