@@ -15,6 +15,7 @@ class PayrollItemModel extends Model
     protected $allowedFields = ['payroll_id', 'salary_component_id', 'code', 'name', 'type', 'amount', 'taxable', 'meta', 'sort_order'];
 
     protected array $casts = [
+        'id'                  => 'int',
         'payroll_id'          => 'int',
         'salary_component_id' => '?int',
         'amount'              => 'int',

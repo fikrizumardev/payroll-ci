@@ -15,6 +15,7 @@ class PayrollAdjustmentModel extends Model
     protected $allowedFields = ['period_id', 'employee_id', 'name', 'type', 'amount', 'taxable', 'note', 'created_by'];
 
     protected array $casts = [
+        'id'          => 'int',
         'period_id'   => 'int',
         'employee_id' => 'int',
         'amount'      => 'int',

@@ -36,6 +36,7 @@ class AttendanceModel extends Model
     protected $allowedFields = ['employee_id', 'date', 'status', 'check_in', 'check_out', 'late_minutes', 'note'];
 
     protected array $casts = [
+        'id'           => 'int',
         'employee_id'  => 'int',
         'late_minutes' => 'int',
     ];

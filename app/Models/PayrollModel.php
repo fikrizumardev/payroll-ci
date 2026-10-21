@@ -20,6 +20,7 @@ class PayrollModel extends Model
     ];
 
     protected array $casts = [
+        'id'                  => 'int',
         'period_id'           => 'int',
         'employee_id'         => 'int',
         'snapshot'            => '?json-array',

@@ -15,6 +15,7 @@ class EmployeeComponentModel extends Model
     protected $allowedFields = ['employee_id', 'salary_component_id', 'amount'];
 
     protected array $casts = [
+        'id'                  => 'int',
         'employee_id'         => 'int',
         'salary_component_id' => 'int',
         'amount'              => 'int',

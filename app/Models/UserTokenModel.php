@@ -15,6 +15,7 @@ class UserTokenModel extends Model
     protected $allowedFields = ['user_id', 'selector', 'token_hash', 'expires_at', 'last_used_at', 'user_agent', 'ip_address'];
 
     protected array $casts = [
+        'id'      => 'int',
         'user_id' => 'int',
     ];
 

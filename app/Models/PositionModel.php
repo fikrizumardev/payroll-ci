@@ -18,6 +18,7 @@ class PositionModel extends Model
     protected $useTimestamps = true;
 
     protected array $casts = [
+        'id'                      => 'int',
         'grade'                   => 'int',
         'base_salary'             => 'int',
         'position_allowance'      => 'int',

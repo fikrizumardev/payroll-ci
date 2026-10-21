@@ -19,6 +19,7 @@ class AuditLogModel extends Model
     ];
 
     protected array $casts = [
+        'id'      => 'int',
         'user_id' => '?int',
         'before'  => '?json-array',
         'after'   => '?json-array',

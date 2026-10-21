@@ -21,6 +21,7 @@ class OvertimeModel extends Model
     protected $allowedFields = ['employee_id', 'date', 'start_time', 'end_time', 'hours', 'reason', 'status', 'approved_by', 'approved_at'];
 
     protected array $casts = [
+        'id'          => 'int',
         'employee_id' => 'int',
         'hours'       => 'float',
         'approved_by' => '?int',

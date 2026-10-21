@@ -14,6 +14,11 @@ class DepartmentModel extends Model
     protected $allowedFields = ['code', 'name', 'description', 'head_employee_id'];
     protected $useTimestamps = true;
 
+    protected array $casts = [
+        'id'               => 'int',
+        'head_employee_id' => '?int',
+    ];
+
     protected $validationRules = [
         'id'               => 'permit_empty|is_natural_no_zero',
         'code'             => 'required|alpha_numeric|max_length[10]|is_unique[departments.code,id,{id}]',

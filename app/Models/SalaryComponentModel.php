@@ -35,6 +35,7 @@ class SalaryComponentModel extends Model
     ];
 
     protected array $casts = [
+        'id'             => 'int',
         'default_amount' => 'int',
         'taxable'        => 'bool',
         'is_bpjs_base'   => 'bool',

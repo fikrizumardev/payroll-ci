@@ -26,6 +26,7 @@ class LoanModel extends Model
     ];
 
     protected array $casts = [
+        'id'           => 'int',
         'employee_id'  => 'int',
         'amount'       => 'int',
         'tenor_months' => 'int',

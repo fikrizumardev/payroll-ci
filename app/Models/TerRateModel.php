@@ -20,6 +20,7 @@ class TerRateModel extends Model
     protected $useTimestamps = true;
 
     protected array $casts = [
+        'id'         => 'int',
         'min_income' => 'int',
         'max_income' => '?int',
         'rate'       => 'float',

@@ -53,20 +53,20 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 3 — Seeder Data Realistis (sebelum UI, supaya UI langsung dibangun di atas data nyata)
 
-- [ ] **T-301 (P0)** `SettingSeeder`: profil PT Nusantara Digital Solusi, tarif BPJS, batas upah, UMP, transport Rp 30.000/hari, makan Rp 35.000/hari, denda telat Rp 25.000.
-- [ ] **T-302 (P0)** `PtkpSeeder`: 8 status beserta nominal dan kategori TER.
-- [ ] **T-303 (P0)** `TerRateSeeder`: seluruh baris TER A/B/C dari PRD Lampiran A. Baris terakhir memakai `max_income = NULL`.
+- [x] **T-301 (P0)** `SettingSeeder`: profil PT Nusantara Digital Solusi, tarif BPJS, batas upah, UMP, denda telat Rp 25.000. *(Tarif transport Rp 30.000 & makan Rp 35.000 per hari disimpan di `salary_components.default_amount` agar hanya ada satu sumber nilai.)*
+- [x] **T-302 (P0)** `PtkpSeeder`: 8 status beserta nominal dan kategori TER.
+- [x] **T-303 (P0)** `TerRateSeeder`: seluruh baris TER A/B/C dari PRD Lampiran A. Baris terakhir memakai `max_income = NULL`.
   - AC: query tarif untuk bruto 10.608.600 kategori A mengembalikan 2,5%, dan untuk 5.400.000 mengembalikan 0%.
-- [ ] **T-304 (P0)** `HolidaySeeder`: libur nasional & cuti bersama 2026 (verifikasi dengan SKB 3 Menteri 2026).
-- [ ] **T-305 (P0)** `DepartmentSeeder` + `PositionSeeder` (PRD Lampiran B.1–B.2).
-- [ ] **T-306 (P0)** `SalaryComponentSeeder`: `BASIC`, `POS_ALW`, `COMM_ALW`, `TRANSPORT` (daily), `MEAL` (daily), `OVERTIME`, `ADJ`, `BPJS_KES_EE`, `JHT_EE`, `JP_EE`, `PPH21`, `LATE_PEN`, `ABSENT_DED`, `LOAN`, dan kontribusi perusahaan `BPJS_KES_ER`, `JKK_ER`, `JKM_ER`, `JHT_ER`, `JP_ER`.
-- [ ] **T-307 (P0)** `EmployeeSeeder`: 31 karyawan sesuai Lampiran B.3. Generator deterministik untuk NIK (prefix kode wilayah DKI `3171`–`3175` + tanggal lahir + urut), NPWP 16 digit = NIK, HP `0812…`, alamat Jakarta/Tangerang/Bekasi/Depok, dan no rekening sesuai panjang digit bank (BCA 10, Mandiri 13, BNI 10, BRI 15). Set kepala departemen setelah insert.
-- [ ] **T-308 (P0)** `UserSeeder`: `admin` (superadmin), `sinta.maharani` & `putri.lestari` (hr), `budi.santoso` (finance), sisanya `employee`. Password di-hash. `hadi.gunawan` dibuat dengan `is_active = 0`.
-- [ ] **T-309 (P0)** `AttendanceSeeder`: hari kerja Agu–Okt 2026 (Oktober s.d. kemarin), `mt_srand(20261021)`, distribusi sesuai PRD §7.1, tidak ada record sebelum `join_date` atau sesudah `resign_date`, dan Galih wajib 1× `absent` di September. Lembur acak untuk jabatan eligible, status `approved`.
-- [ ] **T-310 (P0)** `LoanSeeder`: Kevin 12.000.000 / 12 bulan (mulai Juli 2026), Rizky 6.000.000 / 6 bulan (mulai Agu 2026), Dewi 3.000.000 / 3 bulan (lunas Juli 2026, status `paid_off`), Fajar 2.000.000 (status `pending`).
+- [x] **T-304 (P0)** `HolidaySeeder`: libur nasional & cuti bersama 2026 (verifikasi dengan SKB 3 Menteri 2026).
+- [x] **T-305 (P0)** `DepartmentSeeder` + `PositionSeeder` (PRD Lampiran B.1–B.2).
+- [x] **T-306 (P0)** `SalaryComponentSeeder`: `BASIC`, `POS_ALW`, `COMM_ALW`, `TRANSPORT` (daily), `MEAL` (daily), `OVERTIME`, `ADJ`, `BPJS_KES_EE`, `JHT_EE`, `JP_EE`, `PPH21`, `LATE_PEN`, `ABSENT_DED`, `LOAN`, dan kontribusi perusahaan `BPJS_KES_ER`, `JKK_ER`, `JKM_ER`, `JHT_ER`, `JP_ER`.
+- [x] **T-307 (P0)** `EmployeeSeeder`: 31 karyawan sesuai Lampiran B.3. Generator deterministik untuk NIK (prefix kode wilayah DKI `3171`–`3175` + tanggal lahir + urut), NPWP 16 digit = NIK, HP `0812…`, alamat Jakarta/Tangerang/Bekasi/Depok, dan no rekening sesuai panjang digit bank (BCA 10, Mandiri 13, BNI 10, BRI 15). Set kepala departemen setelah insert.
+- [x] **T-308 (P0)** `UserSeeder`: `admin` (superadmin), `sinta.maharani` & `putri.lestari` (hr), `budi.santoso` (finance), sisanya `employee`. Password di-hash. `hadi.gunawan` dibuat dengan `is_active = 0`.
+- [x] **T-309 (P0)** `AttendanceSeeder`: hari kerja Agu–Okt 2026 (Oktober s.d. kemarin), RNG deterministik (`Random\Randomizer` + `Mt19937`, seed 20261021), distribusi sesuai PRD §7.1, tidak ada record sebelum `join_date` atau sesudah `resign_date`, dan Galih wajib 1× `absent` di September. Lembur acak untuk jabatan eligible, status `approved` (lembur 7 hari terakhir dibiarkan `pending` untuk demo persetujuan).
+- [x] **T-310 (P0)** `LoanSeeder`: Kevin 12.000.000 / 12 bulan (mulai Juli 2026), Rizky 6.000.000 / 6 bulan (mulai Agu 2026), Dewi 3.000.000 / 3 bulan (lunas Juli 2026, status `paid_off`), Fajar 2.000.000 (status `pending`).
 - [ ] **T-311 (P0)** `PayrollHistorySeeder`: buat periode Agu, Sep, Okt 2026, lalu panggil `PayrollService::generate()` (**dependensi: Fase 6**). Bawa Agustus ke `locked`, September ke `paid`, dan Oktober tetap `draft`. Approver = `budi.santoso`.
-- [ ] **T-312 (P1)** `AuditLogSeeder`: ±20 aktivitas contoh (login, generate, approve).
-- [ ] **T-313 (P0)** `DatabaseSeeder` memanggil semua seeder dengan urutan yang benar di dalam transaksi, dengan guard: tolak jalan di `production` kecuali diberi `--force`.
+- [x] **T-312 (P1)** `AuditLogSeeder`: ±20 aktivitas contoh (login, master data, pinjaman). Aktivitas generate/approve payroll ditambahkan oleh T-311.
+- [x] **T-313 (P0)** `DatabaseSeeder` memanggil semua seeder dengan urutan yang benar di dalam transaksi, dengan guard: tolak jalan di `production` kecuali diberi `--force`.
 - AC fase: `php spark migrate:refresh && php spark db:seed DatabaseSeeder` menghasilkan 31 employees, 32 users (31 aktif termasuk `admin`, 1 nonaktif), ±1.600–1.900 attendances (tergantung tanggal seeding), 3 payroll_periods, serta payrolls sebanyak 31 (Agu), 31 (Sep, Hadi prorata), dan 30 (Okt). Menjalankan ulang menghasilkan angka yang sama persis.
 
 > Catatan urutan kerja: T-301..T-310 dikerjakan sekarang. T-311 ditulis setelah Fase 6 selesai, lalu seed ulang.

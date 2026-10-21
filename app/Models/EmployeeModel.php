@@ -41,6 +41,7 @@ class EmployeeModel extends Model
     ];
 
     protected array $casts = [
+        'id'                => 'int',
         'department_id'     => 'int',
         'position_id'       => 'int',
         'basic_salary'      => 'int',

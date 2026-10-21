@@ -15,6 +15,7 @@ class LoanInstallmentModel extends Model
     protected $allowedFields = ['loan_id', 'payroll_id', 'installment_no', 'period', 'amount', 'paid_at'];
 
     protected array $casts = [
+        'id'             => 'int',
         'loan_id'        => 'int',
         'payroll_id'     => '?int',
         'installment_no' => 'int',

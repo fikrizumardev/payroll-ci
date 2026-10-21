@@ -33,6 +33,7 @@ class PayrollPeriodModel extends Model
     ];
 
     protected array $casts = [
+        'id'       => 'int',
         'year'     => 'int',
         'month'    => 'int',
         'workdays' => '?int',

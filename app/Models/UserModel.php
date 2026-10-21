@@ -36,6 +36,7 @@ class UserModel extends Model
     ];
 
     protected array $casts = [
+        'id'                   => 'int',
         'employee_id'          => '?int',
         'is_active'            => 'bool',
         'must_change_password' => 'bool',

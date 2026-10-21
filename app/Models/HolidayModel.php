@@ -20,6 +20,10 @@ class HolidayModel extends Model
     protected $allowedFields = ['date', 'name', 'type'];
     protected $useTimestamps = true;
 
+    protected array $casts = [
+        'id' => 'int',
+    ];
+
     protected $validationRules = [
         'id'   => 'permit_empty|is_natural_no_zero',
         'date' => 'required|valid_date[Y-m-d]|is_unique[holidays.date,id,{id}]',
