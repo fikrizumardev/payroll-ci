@@ -26,6 +26,17 @@ class AttendanceModel extends Model
         self::STATUS_HOLIDAY => 'Libur',
     ];
 
+    /** Kode satu huruf untuk grid rekap & template CSV. */
+    public const CODES = [
+        self::STATUS_PRESENT => 'H',
+        self::STATUS_LATE    => 'T',
+        self::STATUS_SICK    => 'S',
+        self::STATUS_LEAVE   => 'C',
+        self::STATUS_PERMIT  => 'I',
+        self::STATUS_ABSENT  => 'A',
+        self::STATUS_HOLIDAY => 'L',
+    ];
+
     /** Status yang dihitung sebagai hari hadir (dapat tunjangan harian). */
     public const PRESENT_STATUSES = [self::STATUS_PRESENT, self::STATUS_LATE];
 

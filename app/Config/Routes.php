@@ -81,6 +81,47 @@ $routes->group('holidays', $manageMaster, static function (RouteCollection $rout
     $routes->post('(:num)/delete', 'Master\HolidayController::delete/$1', ['as' => 'holidays.delete']);
 });
 
+// ---------------------------------------------------------------------
+// Kehadiran, lembur, pinjaman — lihat: HR & Finance · kelola: HR
+// (persetujuan pinjaman: Finance). Super Admin selalu boleh.
+// ---------------------------------------------------------------------
+$routes->group('attendance', $manageMaster, static function (RouteCollection $routes): void {
+    $routes->post('/', 'AttendanceController::save', ['as' => 'attendance.save']);
+    $routes->get('import', 'AttendanceController::import', ['as' => 'attendance.import']);
+    $routes->get('import/template', 'AttendanceController::template', ['as' => 'attendance.import.template']);
+    $routes->post('import', 'AttendanceController::upload', ['as' => 'attendance.import.upload']);
+    $routes->post('import/commit', 'AttendanceController::commit', ['as' => 'attendance.import.commit']);
+    $routes->post('import/cancel', 'AttendanceController::cancel', ['as' => 'attendance.import.cancel']);
+});
+$routes->group('attendance', $viewMaster, static function (RouteCollection $routes): void {
+    $routes->get('/', 'AttendanceController::index', ['as' => 'attendance.index']);
+    $routes->get('recap', 'AttendanceController::recap', ['as' => 'attendance.recap']);
+});
+
+$routes->group('overtime', $viewMaster, static function (RouteCollection $routes): void {
+    $routes->get('/', 'OvertimeController::index', ['as' => 'overtime.index']);
+});
+$routes->group('overtime', $manageMaster, static function (RouteCollection $routes): void {
+    $routes->post('/', 'OvertimeController::store', ['as' => 'overtime.store']);
+    $routes->post('review', 'OvertimeController::review', ['as' => 'overtime.review']);
+    $routes->post('(:num)', 'OvertimeController::update/$1', ['as' => 'overtime.update']);
+    $routes->post('(:num)/delete', 'OvertimeController::delete/$1', ['as' => 'overtime.delete']);
+});
+
+$routes->group('loans', $viewMaster, static function (RouteCollection $routes): void {
+    $routes->get('/', 'LoanController::index', ['as' => 'loans.index']);
+    $routes->get('(:num)', 'LoanController::show/$1', ['as' => 'loans.show']);
+});
+$routes->group('loans', $manageMaster, static function (RouteCollection $routes): void {
+    $routes->post('/', 'LoanController::store', ['as' => 'loans.store']);
+    $routes->post('(:num)', 'LoanController::update/$1', ['as' => 'loans.update']);
+    $routes->post('(:num)/delete', 'LoanController::delete/$1', ['as' => 'loans.delete']);
+});
+$routes->group('loans', ['filter' => ['auth', 'role:finance']], static function (RouteCollection $routes): void {
+    $routes->post('(:num)/approve', 'LoanController::approve/$1', ['as' => 'loans.approve']);
+    $routes->post('(:num)/reject', 'LoanController::reject/$1', ['as' => 'loans.reject']);
+});
+
 // Pengaturan — lihat: HR & Finance · ubah: Super Admin
 $routes->get('settings', 'SettingController::index', ['as' => 'settings.index', 'filter' => ['auth', 'role:hr,finance']]);
 $routes->post('settings/(:segment)', 'SettingController::update/$1', ['as' => 'settings.update', 'filter' => ['auth', 'role:superadmin']]);

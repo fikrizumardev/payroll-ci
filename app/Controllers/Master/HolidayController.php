@@ -6,7 +6,7 @@ namespace App\Controllers\Master;
 
 use App\Controllers\BaseController;
 use App\Models\HolidayModel;
-use App\Models\PayrollPeriodModel;
+use App\Services\PayrollPeriodGuard;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
 
@@ -25,7 +25,7 @@ class HolidayController extends BaseController
             'year'        => $year,
             'years'       => array_values(array_unique([...$years, (int) date('Y'), $year])),
             'holidays'    => $holidays,
-            'lockedUntil' => $this->lastLockedDate(),
+            'lockedUntil' => PayrollPeriodGuard::make()->lastClosedDate(),
         ]);
     }
 
@@ -90,25 +90,7 @@ class HolidayController extends BaseController
      */
     private function lockedPeriodError(string $date): ?string
     {
-        if ($date === '') {
-            return null;
-        }
-
-        $period = (new PayrollPeriodModel())
-            ->where('start_date <=', $date)->where('end_date >=', $date)
-            ->whereIn('status', [PayrollPeriodModel::STATUS_APPROVED, PayrollPeriodModel::STATUS_PAID, PayrollPeriodModel::STATUS_LOCKED])
-            ->first();
-
-        return $period === null ? null : "Tanggal ini termasuk periode payroll {$period['name']} yang sudah " . strtolower(PayrollPeriodModel::STATUSES[$period['status']]) . '.';
-    }
-
-    private function lastLockedDate(): ?string
-    {
-        $row = (new PayrollPeriodModel())->selectMax('end_date')
-            ->whereIn('status', [PayrollPeriodModel::STATUS_APPROVED, PayrollPeriodModel::STATUS_PAID, PayrollPeriodModel::STATUS_LOCKED])
-            ->first();
-
-        return $row['end_date'] ?? null;
+        return PayrollPeriodGuard::make()->errorFor($date);
     }
 
     /**

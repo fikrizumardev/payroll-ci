@@ -141,12 +141,18 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 8 — Kehadiran, Lembur, Pinjaman
 
-- [ ] **T-801 (P0) Kehadiran harian**: pilih tanggal → tabel semua karyawan aktif dengan segmented control status. Simpan massal (upsert).
-- [ ] **T-802 (P0) Rekap bulanan**: grid karyawan × tanggal dengan sel berwarna dan tooltip, total per status di kolom akhir, filter departemen.
-- [ ] **T-803 (P1) Import CSV kehadiran**: unduh template, preview + validasi per baris sebelum commit.
-- [ ] **T-804 (P0) Lembur**: CRUD, hitung jam otomatis, approve/reject.
-- [ ] **T-805 (P0) Pinjaman**: pengajuan, approve (finance), jadwal cicilan, progress bar sisa pinjaman.
-- [ ] **T-806 (P0) Guard**: tidak boleh mengubah kehadiran/lembur pada tanggal yang termasuk periode `approved`/`paid`/`locked`.
+- [x] **T-801 (P0) Kehadiran harian**: pilih tanggal → tabel semua karyawan aktif dengan segmented control status. Simpan massal (upsert).
+  - Jam masuk melewati toleransi otomatis dicatat Terlambat (menit terlambat dihitung dari `attendance.work_start`); tanggal yang belum terjadi hanya menerima sakit/cuti/izin/libur; penanda baris belum disimpan + peringatan saat meninggalkan halaman.
+- [x] **T-802 (P0) Rekap bulanan**: grid karyawan × tanggal dengan sel berwarna dan tooltip, total per status di kolom akhir, filter departemen.
+  - Indikator hari kerja yang belum tercatat, jumlah hadir per hari, dan tautan tanggal ke input harian.
+- [x] **T-803 (P1) Import CSV kehadiran**: unduh template, preview + validasi per baris sebelum commit.
+  - Template berisi karyawan aktif per tanggal; status menerima kode/label/huruf (H/T/S/C/I/A/L); baris ganda & periode final ditolak; validasi diulang saat menyimpan.
+- [x] **T-804 (P0) Lembur**: CRUD, hitung jam otomatis, approve/reject.
+  - Melewati tengah malam didukung, maks. 12 jam, tidak boleh bertumpuk, hanya jabatan berhak lembur; persetujuan massal; penolakan wajib catatan (kolom `review_note`); estimasi upah lembur memakai `OvertimeCalculator`.
+- [x] **T-805 (P0) Pinjaman**: pengajuan, approve (finance), jadwal cicilan, progress bar sisa pinjaman.
+  - Cicilan dibulatkan ke atas agar lunas tepat di akhir tenor; maks. 50% gaji pokok; satu pinjaman berjalan per karyawan; jadwal menggabungkan cicilan terbukukan, potongan di payroll belum terkunci, dan proyeksi (`LoanSchedule`).
+- [x] **T-806 (P0) Guard**: tidak boleh mengubah kehadiran/lembur pada tanggal yang termasuk periode `approved`/`paid`/`locked`.
+  - `PayrollPeriodGuard` dipakai bersama kehadiran, import, lembur, dan hari libur; perubahan pada periode draft yang sudah di-generate memunculkan pengingat generate ulang.
 
 ## Fase 9 — Modul Payroll (UI)
 

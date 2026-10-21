@@ -67,7 +67,7 @@ $alignClass = static fn (array $column): string => match ($column['align'] ?? 'l
                     <?php foreach ($rows as $index => $row): ?>
                         <tr class="transition-colors hover:bg-slate-50/80 <?= esc($rowClasses[$index] ?? '', 'attr') ?>">
                             <?php foreach ($row as $cellIndex => $cell): ?>
-                                <td class="px-5 py-3.5 align-middle text-slate-700 <?= $alignClass($columns[$cellIndex] ?? []) ?> <?= ($columns[$cellIndex]['align'] ?? '') === 'right' ? 'tabular-nums' : '' ?> <?= esc($columns[$cellIndex]['class'] ?? '', 'attr') ?>">
+                                <td class="px-5 py-3.5 align-middle text-slate-700 <?= $alignClass($columns[$cellIndex] ?? []) ?> <?= ($columns[$cellIndex]['align'] ?? '') === 'right' ? 'whitespace-nowrap tabular-nums' : '' ?> <?= esc($columns[$cellIndex]['class'] ?? '', 'attr') ?>">
                                     <?= $cell ?>
                                 </td>
                             <?php endforeach ?>

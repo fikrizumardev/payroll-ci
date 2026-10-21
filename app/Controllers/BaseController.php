@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Services\Auth\AuthService;
+use App\Services\PayrollPeriodGuard;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -84,6 +85,18 @@ abstract class BaseController extends Controller
      *
      * @return array{0: array<string, mixed>, 1: array<string, mixed>}
      */
+    /**
+     * Pengingat bila perubahan data menyentuh payroll yang sudah di-generate.
+     *
+     * @param list<string> $dates
+     */
+    protected function regenerateHint(array $dates, string $subject): ?string
+    {
+        $periods = PayrollPeriodGuard::make()->staleGeneratedPeriods($dates);
+
+        return $periods === [] ? null : 'Payroll ' . implode(', ', $periods) . " sudah di-generate — generate ulang agar {$subject} ikut terhitung.";
+    }
+
     protected function diff(array $before, array $after): array
     {
         $old       = [];

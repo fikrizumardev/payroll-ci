@@ -97,6 +97,36 @@ class Navigation extends BaseConfig
             }
         }
 
+        return $this->keepMostSpecificActive($groups);
+    }
+
+    /**
+     * /attendance juga cocok dengan /attendance/recap — hanya menu dengan path terpanjang yang aktif.
+     *
+     * @param list<array{label: string, items: list<array<string, mixed>>}> $groups
+     *
+     * @return list<array{label: string, items: list<array<string, mixed>>}>
+     */
+    private function keepMostSpecificActive(array $groups): array
+    {
+        $longest = 0;
+
+        foreach ($groups as $group) {
+            foreach ($group['items'] as $item) {
+                if ($item['active']) {
+                    $longest = max($longest, strlen((string) parse_url((string) $item['url'], PHP_URL_PATH)));
+                }
+            }
+        }
+
+        foreach ($groups as &$group) {
+            foreach ($group['items'] as &$item) {
+                $item['active'] = $item['active'] && strlen((string) parse_url((string) $item['url'], PHP_URL_PATH)) === $longest;
+            }
+            unset($item);
+        }
+        unset($group);
+
         return $groups;
     }
 }
