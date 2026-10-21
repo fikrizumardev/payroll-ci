@@ -85,17 +85,18 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 5 — Layout & UI Kit (Tailwind CDN)
 
-- [ ] **T-501 (P0) `layouts/partials/head.php`**: Tailwind v4 browser CDN, `@theme` token (PRD §8.1), Plus Jakarta Sans, Alpine, Lucide, Chart.js, dan `<meta name="csrf">`.
-- [ ] **T-502 (P0) `layouts/app.php`**: sidebar gelap collapsible (state di `localStorage`), menu dikelompokkan (Utama / Master Data / Kehadiran / Payroll / Laporan / Sistem) dan disaring berdasarkan peran, item aktif dengan indikator gradien, topbar sticky `backdrop-blur` (breadcrumb, pencarian, avatar + dropdown), dan drawer mobile.
-- [ ] **T-503 (P0) Komponen view** (`app/Views/components/`), dipanggil via `view('components/x', $data)`:
+- [x] **T-501 (P0) `layouts/partials/head.php`**: Tailwind v4 browser CDN, `@theme` token (PRD §8.1), Plus Jakarta Sans, Alpine, Lucide, Chart.js, dan `<meta name="csrf">`.
+- [x] **T-502 (P0) `layouts/app.php`**: sidebar gelap collapsible (state di `localStorage`), menu dikelompokkan (Utama / Master Data / Kehadiran / Payroll / Laporan / Sistem) dan disaring berdasarkan peran, item aktif dengan indikator gradien, topbar sticky `backdrop-blur` (breadcrumb, pencarian, avatar + dropdown), dan drawer mobile.
+- [x] **T-503 (P0) Komponen view** (`app/Views/components/`), dipanggil via helper `component('x', $data)` (scope terisolasi, data halaman tidak bocor):
   - `kpi_card` (ikon gradien, nilai, delta, sparkline opsional)
   - `badge` (draft/review/approved/paid/locked/active/resigned/…)
   - `data_table` (header sticky, empty state, slot aksi) + `pagination` (style kustom untuk Pager CI4)
   - `form_input`, `form_select`, `form_money` (format ribuan otomatis dengan Alpine)
   - `modal_confirm`, `toast` (flashdata `success|error|warning`), `empty_state`, `page_header` (judul, subjudul, tombol aksi)
-- [ ] **T-504 (P0) Halaman error** 403/404 bergaya sesuai tema.
-- [ ] **T-505 (P1) Halaman "UI Kit"** `/dev/ui-kit` (hanya environment development) untuk review visual semua komponen.
+- [x] **T-504 (P0) Halaman error** 403/404 bergaya sesuai tema.
+- [x] **T-505 (P1) Halaman "UI Kit"** `/dev/ui-kit` (hanya environment development) untuk review visual semua komponen.
 - AC fase: tampilan konsisten di 375px, 768px, dan 1440px; tidak ada error di console; skor aksesibilitas Lighthouse ≥ 90.
+  - Diverifikasi dengan screenshot headless Chrome (375/768/1440, tanpa overflow horizontal, tanpa error JS) dan audit axe-core WCAG 2 A/AA: 0 pelanggaran di login, dashboard, UI Kit, dan ganti password.
 
 ## Fase 6 — Engine Payroll (inti, wajib unit test)
 

@@ -87,7 +87,7 @@ $companyName  = service('appSettings')->get('company.name', 'PayrollKu');
             </div>
         </div>
 
-        <p class="relative text-xs text-slate-500">&copy; <?= date('Y') ?> <?= esc($companyName) ?> · PayrollKu v1.0</p>
+        <p class="relative text-xs text-slate-400">&copy; <?= date('Y') ?> <?= esc($companyName) ?> · PayrollKu v1.0</p>
     </aside>
 
     <!-- Form login -->
@@ -217,7 +217,7 @@ $companyName  = service('appSettings')->get('company.name', 'PayrollKu');
                 </div>
             <?php endif ?>
 
-            <p class="mt-8 flex items-center justify-center gap-1.5 text-xs text-slate-400">
+            <p class="mt-8 flex items-center justify-center gap-1.5 text-xs text-slate-500">
                 <?= icon('shield-check', 'size-3.5') ?> Dilindungi CSRF, enkripsi password, dan pembatasan percobaan login.
             </p>
         </div>

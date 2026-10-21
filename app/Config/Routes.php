@@ -26,3 +26,13 @@ $routes->group('', ['filter' => 'auth'], static function (RouteCollection $route
     $routes->get('account/password', 'AccountController::password', ['as' => 'account.password']);
     $routes->post('account/password', 'AccountController::updatePassword', ['as' => 'account.password.update']);
 });
+
+// ---------------------------------------------------------------------
+// Khusus development: katalog komponen UI
+// ---------------------------------------------------------------------
+if (ENVIRONMENT === 'development') {
+    $routes->group('dev', ['filter' => 'auth'], static function (RouteCollection $routes): void {
+        $routes->get('ui-kit', 'DevController::uiKit', ['as' => 'dev.ui-kit']);
+        $routes->post('ui-kit/confirm', 'DevController::confirmDemo', ['as' => 'dev.ui-kit.confirm']);
+    });
+}

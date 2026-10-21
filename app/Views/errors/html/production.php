@@ -1,25 +1,13 @@
-<!doctype html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="robots" content="noindex">
+<?php
+/**
+ * Error tak terduga di environment production (detail error tidak ditampilkan).
+ */
+$code        = '500';
+$heading     = 'Terjadi kendala pada sistem';
+$description = 'Maaf, permintaan Anda belum bisa diproses. Tim kami sudah mencatat kejadian ini. Silakan coba beberapa saat lagi.';
+$iconPath    = 'M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z';
+$links       = [
+    ['label' => 'Muat ulang Dashboard', 'url' => 'dashboard', 'primary' => true],
+];
 
-    <title><?= lang('Errors.whoops') ?></title>
-
-    <style>
-        <?= preg_replace('#[\r\n\t ]+#', ' ', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'debug.css')) ?>
-    </style>
-</head>
-<body>
-
-    <div class="container text-center">
-
-        <h1 class="headline"><?= lang('Errors.whoops') ?></h1>
-
-        <p class="lead"><?= lang('Errors.weHitASnag') ?></p>
-
-    </div>
-
-</body>
-
-</html>
+include __DIR__ . '/_shell.php';

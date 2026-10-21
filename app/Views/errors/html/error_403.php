@@ -1,13 +1,13 @@
 <?php
-$this->extend('layouts/auth');
-$this->section('content');
-?>
-<main class="flex min-h-full items-center justify-center bg-slate-50 px-6 py-24">
-    <div class="text-center">
-        <p class="text-sm font-semibold text-brand-600">403</p>
-        <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900">Akses ditolak</h1>
-        <p class="mt-3 text-sm text-slate-500">Anda tidak memiliki izin untuk membuka halaman ini.</p>
-        <a href="<?= url_to('dashboard') ?>" class="btn btn-primary mt-8">Kembali ke Dashboard</a>
-    </div>
-</main>
-<?php $this->endSection() ?>
+/**
+ * Akses ditolak — dirender oleh RoleFilter.
+ */
+$code        = '403';
+$heading     = 'Akses ditolak';
+$description = 'Akun Anda tidak memiliki izin untuk membuka halaman ini. Hubungi administrator bila Anda merasa memerlukan akses.';
+$iconPath    = 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z M9.5 9.5l5 5 M14.5 9.5l-5 5';
+$links       = [
+    ['label' => 'Kembali ke Dashboard', 'url' => 'dashboard', 'primary' => true],
+];
+
+include __DIR__ . '/_shell.php';

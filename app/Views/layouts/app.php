@@ -1,54 +1,76 @@
 <?php
 /**
- * Layout aplikasi (sementara) — topbar, flash message, dan konten.
- * Sidebar & navigasi lengkap ditambahkan pada Fase 5.
+ * Layout utama aplikasi: sidebar gelap (collapsible + drawer mobile), topbar,
+ * command palette (Ctrl/⌘ + K), toast flash message, dan modal konfirmasi global.
+ *
+ * Data opsional dari halaman:
+ * @var string|null                                   $title
+ * @var list<array{label: string, url?: string|null}> $breadcrumbs
  */
-$user = service('auth')->user();
+$user       = service('auth')->user();
+$navigation = config('Navigation')->forUser($user ?? []);
+$quickLinks = [];
+
+foreach ($navigation as $group) {
+    foreach ($group['items'] as $item) {
+        if ($item['ready']) {
+            $quickLinks[] = ['label' => $item['label'], 'group' => $group['label'], 'url' => $item['url'], 'icon' => $item['icon']];
+        }
+    }
+}
+
+$quickLinks[] = ['label' => 'Ganti Password', 'group' => 'Akun', 'url' => url_to('account.password'), 'icon' => 'key-round'];
 ?>
 <!doctype html>
 <html lang="id" class="h-full bg-slate-50">
 <head>
     <?= $this->include('layouts/partials/head') ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js" defer></script>
+    <script>
+        // Terapkan state sidebar sebelum render agar tidak berkedip
+        if (localStorage.getItem('payrollku.sidebar') === 'collapsed') {
+            document.documentElement.classList.add('sidebar-collapsed');
+        }
+    </script>
 </head>
-<body class="min-h-full font-sans text-slate-800">
-    <header class="sticky top-0 z-30 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <a href="<?= url_to('dashboard') ?>" class="flex items-center gap-2.5">
-                <span class="flex size-9 items-center justify-center rounded-xl bg-linear-to-br from-brand-600 to-violet-600 shadow-glow">
-                    <?= icon('wallet-cards', 'size-5 text-white') ?>
-                </span>
-                <span class="font-bold tracking-tight text-slate-900">PayrollKu</span>
-            </a>
+<body class="h-full font-sans text-slate-800" x-data="appShell(<?= esc(json_encode($quickLinks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'attr') ?>)"
+      @keydown.window.prevent.ctrl.k="openPalette()" @keydown.window.prevent.meta.k="openPalette()" @keydown.window.escape="mobileOpen = false">
 
-            <?php if ($user): ?>
-                <div class="flex items-center gap-3">
-                    <div class="hidden text-right sm:block">
-                        <p class="text-sm font-semibold text-slate-900"><?= esc($user['name']) ?></p>
-                        <p class="text-xs text-slate-500"><?= esc(role_label($user['role'])) ?></p>
-                    </div>
-                    <?= avatar($user['name']) ?>
-                    <a href="<?= url_to('account.password') ?>" class="btn btn-ghost px-2.5" title="Ganti password" aria-label="Ganti password"><?= icon('key-round', 'size-4') ?></a>
-                    <form method="post" action="<?= url_to('logout') ?>">
-                        <?= csrf_field() ?>
-                        <button type="submit" class="btn btn-secondary px-3"><?= icon('log-out', 'size-4') ?> Keluar</button>
-                    </form>
-                </div>
-            <?php endif ?>
-        </div>
-    </header>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow-elevated">Lewati ke konten</a>
 
-    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <?php foreach (['success' => 'emerald', 'warning' => 'amber', 'error' => 'rose'] as $key => $tone): ?>
-            <?php if (session($key)): ?>
-                <div class="mb-6 rounded-xl bg-<?= $tone ?>-50 p-3.5 text-sm text-<?= $tone ?>-800 ring-1 ring-<?= $tone ?>-200" role="status">
-                    <?= esc(session($key)) ?>
-                </div>
-            <?php endif ?>
-        <?php endforeach ?>
+    <!-- Overlay drawer mobile -->
+    <div x-show="mobileOpen" x-cloak x-transition.opacity @click="mobileOpen = false"
+         class="fixed inset-0 z-40 bg-ink-950/60 backdrop-blur-sm lg:hidden" aria-hidden="true"></div>
 
-        <?= $this->renderSection('content') ?>
-    </main>
+    <?= component('layout/sidebar', ['navigation' => $navigation, 'user' => $user]) ?>
+
+    <div class="flex min-h-full flex-col transition-[padding] duration-300 lg:pl-68 [.sidebar-collapsed_&]:lg:pl-20">
+        <?= component('layout/topbar', ['user' => $user, 'breadcrumbs' => $breadcrumbs ?? [], 'title' => $title ?? null]) ?>
+
+        <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+            <div class="mx-auto max-w-[90rem]">
+                <?= $this->renderSection('content') ?>
+            </div>
+        </main>
+
+        <footer class="border-t border-slate-200/70 px-4 py-5 text-xs text-slate-500 sm:px-6 lg:px-8">
+            <div class="mx-auto flex max-w-[90rem] flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <p>&copy; <?= date('Y') ?> <?= esc(service('appSettings')->get('company.name', 'PayrollKu')) ?></p>
+                <p>PayrollKu v1.0 · Waktu server <?= esc(tanggal_id(date('Y-m-d H:i:s'), 'datetime')) ?> WIB</p>
+            </div>
+        </footer>
+    </div>
+
+    <?= component('layout/command_palette') ?>
+    <?= component('toast', ['flash' => [
+        'success' => session('success'),
+        'error'   => session('error'),
+        'warning' => session('warning'),
+        'info'    => session('info'),
+    ]]) ?>
+    <?= component('modal_confirm') ?>
 
     <?= $this->include('layouts/partials/scripts') ?>
+    <?= $this->renderSection('scripts') ?>
 </body>
 </html>

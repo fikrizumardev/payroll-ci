@@ -9,12 +9,11 @@ $this->section('content');
 $errors = (array) (session('errors') ?? []);
 ?>
 <div class="mx-auto max-w-2xl">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Ganti Password</h1>
-        <p class="mt-1 text-sm text-slate-500">
-            Terakhir diganti: <?= esc(tanggal_id($lastChanged, 'datetime')) ?>
-        </p>
-    </div>
+    <?= component('page_header', [
+        'eyebrow'  => 'Keamanan akun',
+        'title'    => 'Ganti Password',
+        'subtitle' => 'Terakhir diganti ' . tanggal_id($lastChanged, 'datetime') . '. Gunakan password unik yang tidak dipakai di aplikasi lain.',
+    ]) ?>
 
     <?php if ($mustChange): ?>
         <div class="mb-6 flex gap-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-800 ring-1 ring-amber-200">
@@ -49,10 +48,10 @@ $errors = (array) (session('errors') ?? []);
                 <input id="new_password" name="new_password" :type="show ? 'text' : 'password'" type="password"
                        class="form-control" autocomplete="new-password" x-model="password" required>
                 <ul class="mt-2 grid gap-1 text-xs sm:grid-cols-2">
-                    <li class="flex items-center gap-1.5" :class="password.length >= 8 ? 'text-emerald-600' : 'text-slate-400'">
+                    <li class="flex items-center gap-1.5" :class="password.length >= 8 ? 'text-emerald-700' : 'text-slate-500'">
                         <?= icon('circle-check', 'size-3.5') ?> Minimal 8 karakter
                     </li>
-                    <li class="flex items-center gap-1.5" :class="/[A-Za-z]/.test(password) && /\d/.test(password) ? 'text-emerald-600' : 'text-slate-400'">
+                    <li class="flex items-center gap-1.5" :class="/[A-Za-z]/.test(password) && /\d/.test(password) ? 'text-emerald-700' : 'text-slate-500'">
                         <?= icon('circle-check', 'size-3.5') ?> Mengandung huruf dan angka
                     </li>
                 </ul>

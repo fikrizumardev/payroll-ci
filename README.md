@@ -56,6 +56,10 @@ Login memakai **username + password** (tanpa email).
 
 > Ganti semua password default sebelum dipakai di luar lingkungan development.
 
+## UI Kit
+
+Di environment `development`, katalog komponen tersedia di `/dev/ui-kit` (setelah login). Komponen ada di `app/Views/components/` dan dirender dengan helper `component('nama', [...])`. Tekan **Ctrl/⌘ + K** untuk membuka pencarian menu cepat.
+
 ## Testing
 
 ```bash

@@ -193,3 +193,66 @@ if (! function_exists('role_label')) {
         return App\Models\UserModel::ROLES[$role] ?? ucfirst($role);
     }
 }
+
+if (! function_exists('component')) {
+    /**
+     * Render komponen dari app/Views/components dalam scope terisolasi:
+     * variabel halaman tidak bocor ke komponen dan sebaliknya.
+     *
+     *   <?= component('kpi_card', ['label' => 'Karyawan Aktif', 'value' => '30', 'icon' => 'users']) ?>
+     *
+     * @param array<string, mixed> $data
+     */
+    function component(string $name, array $data = []): string
+    {
+        $file = APPPATH . 'Views/components/' . $name . '.php';
+
+        if (! is_file($file)) {
+            throw new InvalidArgumentException("Komponen '{$name}' tidak ditemukan.");
+        }
+
+        return (static function (string $__file, array $__data): string {
+            extract($__data, EXTR_SKIP);
+            ob_start();
+
+            try {
+                include $__file;
+            } catch (Throwable $e) {
+                ob_end_clean();
+
+                throw $e;
+            }
+
+            return (string) ob_get_clean();
+        })($file, $data);
+    }
+}
+
+if (! function_exists('route_exists')) {
+    /**
+     * Apakah named route sudah terdaftar (dipakai menu untuk modul yang belum tersedia).
+     */
+    function route_exists(string $name): bool
+    {
+        return route_to($name) !== false;
+    }
+}
+
+if (! function_exists('nav_is_active')) {
+    /**
+     * Menu aktif bila path saat ini sama dengan / berada di bawah path menu.
+     */
+    function nav_is_active(string $routeName): bool
+    {
+        $target = route_to($routeName);
+
+        if ($target === false) {
+            return false;
+        }
+
+        $current = '/' . trim(service('request')->getPath(), '/');
+        $target  = '/' . trim((string) parse_url($target, PHP_URL_PATH), '/');
+
+        return $current === $target || str_starts_with($current, rtrim($target, '/') . '/');
+    }
+}

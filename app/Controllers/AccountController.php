@@ -17,6 +17,7 @@ class AccountController extends BaseController
 
         return view('account/password', [
             'title'       => 'Ganti Password',
+            'breadcrumbs' => [['label' => 'Akun'], ['label' => 'Ganti Password']],
             'mustChange'  => (bool) $user['must_change_password'],
             'lastChanged' => $user['password_changed_at'],
         ]);
