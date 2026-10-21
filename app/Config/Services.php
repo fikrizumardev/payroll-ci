@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Services\SettingService;
 use CodeIgniter\Config\BaseService;
 
 /**
@@ -19,14 +20,15 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-    /*
-     * public static function example($getShared = true)
-     * {
-     *     if ($getShared) {
-     *         return static::getSharedInstance('example');
-     *     }
-     *
-     *     return new \CodeIgniter\Example();
-     * }
+    /**
+     * Pengaturan aplikasi dari tabel `settings`.
      */
+    public static function appSettings(bool $getShared = true): SettingService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('appSettings');
+        }
+
+        return new SettingService();
+    }
 }

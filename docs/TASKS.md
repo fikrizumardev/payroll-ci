@@ -8,21 +8,21 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 0 — Setup Proyek
 
-- [ ] **T-001 (P0) Inisialisasi CodeIgniter 4**
+- [x] **T-001 (P0) Inisialisasi CodeIgniter 4**
   - `composer create-project codeigniter4/appstarter .` di `C:\Laravel-herd\payroll-app` (folder `docs/` dipindah sementara atau dipertahankan).
-  - Salin `env` → `.env`, set `CI_ENVIRONMENT = development`, `app.baseURL = 'http://payroll-app.test/'`, `app.appTimezone = 'Asia/Jakarta'`, `app.defaultLocale = 'id'`.
+  - Salin `env` → `.env`, set `CI_ENVIRONMENT = development`, `app.baseURL = 'http://localhost:8080/'`, `app.appTimezone = 'Asia/Jakarta'`, `app.defaultLocale = 'id'`.
   - AC: `php spark serve` atau `http://payroll-app.test` menampilkan halaman welcome CI4.
 
-- [ ] **T-002 (P0) Konfigurasi database**
+- [x] **T-002 (P0) Konfigurasi database**
   - Buat DB `payroll_app` (utf8mb4_unicode_ci) di MySQL/MariaDB (Herd Pro / DBngin / XAMPP).
   - Isi `database.default.*` di `.env`.
   - AC: `php spark db:table --show` terhubung tanpa error.
 
-- [ ] **T-003 (P0) Paket Composer**
+- [x] **T-003 (P0) Paket Composer**
   - `composer require dompdf/dompdf phpoffice/phpspreadsheet`.
   - AC: autoload jalan dan kedua kelas bisa di-instantiate.
 
-- [ ] **T-004 (P1) Konvensi & tooling**
+- [x] **T-004 (P1) Konvensi & tooling**
   - Tambahkan `.gitignore` (vendor, writable, .env), `git init`, dan commit awal.
   - Buat `README.md` berisi langkah instalasi dan tabel akun default (PRD §7.3).
   - AC: repo bersih, dan README bisa diikuti dari nol.
@@ -45,10 +45,10 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 2 — Model & Helper
 
-- [ ] **T-201 (P0)** Model untuk setiap tabel (`$allowedFields`, `$validationRules`, `$useTimestamps`, `$returnType = 'array'`, `$useSoftDeletes` untuk Employee).
-- [ ] **T-202 (P0)** `format_helper.php`: `rupiah(int): string` → `Rp 9.574.785`, `tanggal_id(date, format)` → `21 Okt 2026`, `bulan_id(int)`, `terbilang(int)` → "sembilan juta lima ratus tujuh puluh empat ribu tujuh ratus delapan puluh lima rupiah".
-- [ ] **T-203 (P0)** `ui_helper.php`: `status_badge(string)`, `initials(name)`, `avatar_color(name)`, `mask_id(string)`.
-- [ ] **T-204 (P0)** `SettingService` dengan cache per request: `get('bpjs.kes.company_rate')`, dst.
+- [x] **T-201 (P0)** Model untuk setiap tabel (`$allowedFields`, `$validationRules`, `$useTimestamps`, `$returnType = 'array'`, `$useSoftDeletes` untuk Employee).
+- [x] **T-202 (P0)** `format_helper.php`: `rupiah(int): string` → `Rp 9.574.785`, `tanggal_id(date, format)` → `21 Okt 2026`, `bulan_id(int)`, `terbilang(int)` → "sembilan juta lima ratus tujuh puluh empat ribu tujuh ratus delapan puluh lima rupiah".
+- [x] **T-203 (P0)** `ui_helper.php`: `status_badge(string)`, `initials(name)`, `avatar_color(name)`, `mask_id(string)`.
+- [x] **T-204 (P0)** `SettingService` dengan cache per request: `get('bpjs.kes.company_rate')`, dst.
 - AC: unit test `terbilang` dan `rupiah` lulus untuk 0, 1.000, 1.000.000, 9.574.785, dan 1.250.000.000.
 
 ## Fase 3 — Seeder Data Realistis (sebelum UI, supaya UI langsung dibangun di atas data nyata)
