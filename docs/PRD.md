@@ -113,7 +113,7 @@ Tiga syarat utama dari pemilik produk:
 - Cicilan dipotong otomatis saat generate payroll. Sisa pinjaman diperbarui saat periode di-*lock*.
 
 ### F5. Proses Payroll (inti)
-1. HR membuat **Periode** (mis. "Oktober 2026", 1–31 Okt 2026, tanggal bayar 30 Okt 2026).
+1. HR membuat **Periode** (mis. "Oktober 2026", 1–31 Okt 2026). Tanggal bayar default = hari kerja terakhir bulan itu (30 Okt 2026), dapat diubah lewat pengaturan `payroll.pay_day`.
 2. **Generate:** sistem menghitung semua karyawan aktif pada periode itu, termasuk karyawan yang masuk atau keluar di tengah periode (prorata).
 3. **Review:** tabel ringkasan per karyawan (bruto, potongan, PPh 21, netto) dan drill-down ke rincian komponen. HR bisa menambahkan **penyesuaian manual** (bonus, THR, koreksi) lalu regenerate.
 4. **Submit → Finance approve/reject** (reject wajib menyertakan catatan dan mengembalikan status ke `draft`).
@@ -180,8 +180,8 @@ Kategori TER ditentukan dari status PTKP:
 
 **Masa Desember (atau bulan terakhir bagi karyawan yang keluar):** hitung ulang setahun.
 ```
-bruto_setahun   = Σ bruto_pph Jan–Des
-biaya_jabatan   = min(5% × bruto_setahun, 6.000.000)
+bruto_setahun   = saldo awal (tax_ytd_balances) + Σ bruto_pph bulan sebelumnya + bulan ini
+biaya_jabatan   = min(5% × bruto_setahun, 500.000 × jumlah bulan bekerja)   (maks 6.000.000)
 iuran_pensiun   = Σ iuran JHT + JP porsi karyawan
 neto            = bruto_setahun − biaya_jabatan − iuran_pensiun
 pkp             = floor((neto − PTKP) / 1000) × 1000   (min 0)
@@ -189,6 +189,10 @@ pph_setahun     = tarif progresif Pasal 17 atas pkp
 pph21_desember  = pph_setahun − Σ pph21 Jan–Nov   (boleh negatif = lebih bayar)
 ```
 Tarif Pasal 17: 5% (≤ 60 jt), 15% (60–250 jt), 25% (250–500 jt), 30% (500 jt–5 M), 35% (> 5 M).
+
+Bila hasil masa terakhir negatif (lebih potong), selisihnya dibayarkan kembali sebagai pendapatan **"Pengembalian Kelebihan PPh 21"** (bukan objek pajak). Hal ini wajar terjadi pada karyawan yang berhenti di tengah tahun, karena PTKP setahun penuh tetap berlaku.
+
+**Saldo awal tahun berjalan.** Untuk bulan-bulan sebelum PayrollKu dipakai, akumulasi bruto, iuran pensiun, dan PPh 21 disimpan di tabel `tax_ytd_balances` (data migrasi). Data contoh berisi saldo Januari–Juli 2026 yang disimulasikan dengan engine yang sama.
 
 **PTKP per tahun:** TK/0 = 54.000.000. Tambahan kawin = 4.500.000. Tambahan per tanggungan = 4.500.000 (maks 3 tanggungan). Jadi K/0 = 58,5 jt, K/1 = 63 jt, K/2 = 67,5 jt, K/3 = 72 jt, TK/1 = 58,5 jt, TK/2 = 63 jt, TK/3 = 67,5 jt.
 
@@ -199,9 +203,11 @@ Tabel TER lengkap ada di **Lampiran A** dan wajib di-seed ke tabel `ter_rates`.
 |---|---|
 | BPJS porsi karyawan | Lihat 6.2 |
 | PPh 21 | Lihat 6.3 |
-| Alpha (tanpa keterangan) | `(gaji_pokok / hari_kerja_periode) × hari_alpha` |
-| Keterlambatan | `Rp 25.000 × jumlah hari late` (configurable) |
-| Cicilan pinjaman | Cicilan aktif bulan berjalan (tidak melebihi sisa pinjaman) |
+| Alpha (tanpa keterangan) | `(gaji_pokok / hari_kerja_periode) × hari_alpha`. Mengurangi bruto PPh 21. |
+| Keterlambatan | `Rp 25.000 × jumlah hari late` (configurable). Mengurangi bruto PPh 21. |
+| Cicilan pinjaman | Cicilan aktif bulan berjalan, tidak melebihi sisa pinjaman dikurangi potongan di periode lain yang belum dikunci. Dibukukan ke `loan_installments` saat periode dikunci. |
+
+Iuran BPJS dan upah lembur dihitung dari **upah sebulan penuh** (gaji pokok + tunjangan tetap), tidak diprorata.
 
 **Take Home Pay** = total pendapatan − total potongan. Jika hasilnya negatif, tandai sebagai *warning* di halaman review.
 
@@ -239,9 +245,10 @@ Karyawan hipotetis (bukan data seed), TK/0 (TER A). Gaji pokok 8.000.000, tunjan
 8. `EmployeeSeeder`: 31 karyawan (Lampiran B)
 9. `UserSeeder`: 1 superadmin dan akun untuk setiap karyawan aktif
 10. `AttendanceSeeder`: kehadiran Agustus, September, dan Oktober 2026 (Oktober s.d. H-1 saat seeding). Distribusi: ±92% hadir, ±4% late, ±2% sakit, ±1% izin/cuti, ±1% alpha. Lembur acak 0–12 jam/bulan untuk jabatan eligible.
-11. `LoanSeeder`: 4 pinjaman (2 aktif, 1 lunas, 1 pending)
-12. `PayrollHistorySeeder`: membuat periode **Agustus 2026 (locked)** dan **September 2026 (paid)** dengan **memanggil `PayrollService` yang sama** dengan produksi, serta **Oktober 2026 (draft)** yang sudah di-generate untuk demo approval
-13. `AuditLogSeeder`: beberapa jejak aktivitas contoh
+11. `LoanSeeder`: 4 pinjaman (1 berjalan, 1 disetujui, 1 lunas, 1 pending)
+12. `TaxYtdBalanceSeeder`: saldo awal PPh 21 Januari–Juli 2026 per karyawan
+13. `PayrollHistorySeeder`: membuat periode **Agustus 2026 (locked)** dan **September 2026 (paid, dengan insentif penjualan)** dengan **memanggil `PayrollService` & `PayrollStateMachine` yang sama** dengan produksi, serta **Oktober 2026 (draft)** yang sudah di-generate untuk demo approval
+14. `AuditLogSeeder`: beberapa jejak aktivitas contoh
 
 ### 7.2 Perusahaan (fiktif)
 **PT Nusantara Digital Solusi**, Gedung Graha Niaga Lt. 12, Jl. Jend. Sudirman Kav. 58, Jakarta Selatan 12190. NPWP perusahaan: `0012345678901000` (fiktif).
@@ -383,6 +390,7 @@ Aturan: controller tetap tipis, seluruh logika hitung ada di `Services/Payroll`,
 | `payrolls` | id, period_id, employee_id, snapshot (JSON: jabatan, dept, PTKP, bank saat itu), workdays, present_days, gross_income, bruto_pph, total_deduction, pph21, ter_category, ter_rate, bpjs_company_total, bpjs_employee_total, take_home_pay. UNIQUE(period_id, employee_id) |
 | `payroll_items` | id, payroll_id, code, name, type (earning/deduction/company_contribution), amount, taxable, meta (JSON), sort_order |
 | `payroll_adjustments` | id, period_id, employee_id, name, type, amount, taxable, created_by |
+| `tax_ytd_balances` | id, employee_id, year, through_month, months, gross_income, pension, pph21, note. UNIQUE(employee_id, year) |
 | `settings` | key (PK), value, group, type |
 | `ptkp_rates` | status (PK), amount, ter_category |
 | `ter_rates` | id, category (A/B/C), min_income, max_income (nullable = tak terhingga), rate (DECIMAL(5,2)) |
@@ -515,7 +523,7 @@ NIK KTP (16 digit), NPWP (16 digit), no HP, alamat, tanggal lahir, dan no rekeni
 | EMP-0003 | Sinta Maharani | sinta.maharani | HR Manager | permanent | 2018-07-02 | 18.000.000 | K/1 | BCA |
 | EMP-0004 | Dimas Saputra | dimas.saputra | HR Generalist | permanent | 2022-02-14 | 8.500.000 | TK/0 | BNI |
 | EMP-0005 | Putri Ayu Lestari | putri.lestari | Payroll Officer | permanent | 2021-09-01 | 8.000.000 | TK/0 | BCA |
-| EMP-0006 | Anisa Rahmawati | anisa.rahmawati | Talent Acquisition | probation | **2026-08-03** | 7.000.000 | TK/0 | BNI |
+| EMP-0006 | Anisa Rahmawati | anisa.rahmawati | Talent Acquisition | probation | **2026-08-10** | 7.000.000 | TK/0 | BNI |
 | EMP-0007 | Budi Santoso | budi.santoso | Finance Manager | permanent | 2017-05-15 | 20.000.000 | K/2 | Mandiri |
 | EMP-0008 | Yuliana Hartono | yuliana.hartono | Accountant | permanent | 2020-10-05 | 9.500.000 | K/0 | BCA |
 | EMP-0009 | Fajar Nugroho | fajar.nugroho | Finance Staff | contract | 2023-03-20 | 6.500.000 | TK/0 | BRI |
@@ -543,7 +551,7 @@ NIK KTP (16 digit), NPWP (16 digit), no HP, alamat, tanggal lahir, dan no rekeni
 | EMP-0031 | Hadi Gunawan | hadi.gunawan | Software Engineer | **resigned 2026-09-15** | 2020-02-03 | 13.000.000 | K/1 | BCA |
 
 Skenario khusus yang sengaja ditanam di seed:
-- **Anisa** masuk 3 Agu 2026, sehingga gaji Agustus dihitung prorata.
+- **Anisa** masuk 10 Agu 2026, sehingga gaji Agustus dihitung prorata (14 dari 19 hari kerja). *(Semula 3 Agu; diubah karena 3 Agu adalah hari kerja pertama Agustus sehingga prorata hari kerja tidak terjadi.)*
 - **Hadi** resign 15 Sep 2026, sehingga gaji September prorata dan namanya tidak muncul di Oktober. Akun loginnya nonaktif.
 - **Kevin** & **Rizky** punya pinjaman aktif (cicilan terpotong di setiap periode).
 - **Galih** punya 1 hari alpha di September (potongan alpha muncul di slip).

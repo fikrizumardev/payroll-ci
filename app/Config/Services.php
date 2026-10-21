@@ -6,6 +6,8 @@ use App\Models\UserModel;
 use App\Models\UserTokenModel;
 use App\Services\AuditLogger;
 use App\Services\Auth\AuthService;
+use App\Services\Payroll\PayrollService;
+use App\Services\Payroll\PayrollStateMachine;
 use App\Services\SettingService;
 use CodeIgniter\Config\BaseService;
 
@@ -46,6 +48,30 @@ class Services extends BaseService
         }
 
         return new AuthService(new UserModel(), new UserTokenModel(), service('auditLogger'), service('session'));
+    }
+
+    /**
+     * Pembuatan periode & generate payroll.
+     */
+    public static function payroll(bool $getShared = true): PayrollService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('payroll');
+        }
+
+        return new PayrollService(db_connect(), service('appSettings'), service('auditLogger'));
+    }
+
+    /**
+     * Alur status periode payroll (submit → approve → pay → lock).
+     */
+    public static function payrollWorkflow(bool $getShared = true): PayrollStateMachine
+    {
+        if ($getShared) {
+            return static::getSharedInstance('payrollWorkflow');
+        }
+
+        return new PayrollStateMachine(db_connect(), service('auditLogger'));
     }
 
     /**

@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
         UserSeeder::class,
         AttendanceSeeder::class,
         LoanSeeder::class,
+        TaxYtdBalanceSeeder::class,
+        PayrollHistorySeeder::class,
         AuditLogSeeder::class,
     ];
 
@@ -78,7 +80,7 @@ class DatabaseSeeder extends Seeder
 
         $rows = [];
 
-        foreach (['departments', 'positions', 'employees', 'users', 'attendances', 'overtimes', 'loans', 'holidays', 'ter_rates', 'audit_logs'] as $table) {
+        foreach (['departments', 'positions', 'employees', 'users', 'attendances', 'overtimes', 'loans', 'loan_installments', 'tax_ytd_balances', 'payroll_periods', 'payrolls', 'payroll_items', 'audit_logs'] as $table) {
             $rows[] = [$table, number_format($this->db->table($table)->countAllResults(), 0, ',', '.')];
         }
 

@@ -73,7 +73,7 @@ class SettingSeeder extends Seeder
             'payroll' => [
                 'payroll.minimum_wage'      => ['UMP / UMK acuan', 'int', '5396761', 'UMP DKI Jakarta 2025; perbarui setiap tahun'],
                 'payroll.overtime_divisor'  => ['Pembagi upah sejam lembur', 'int', '173', 'Upah sejam = 1/173 × upah sebulan (PP 35/2021)'],
-                'payroll.pay_day'           => ['Tanggal gajian default', 'int', '25', 'Jika jatuh di hari libur, maju ke hari kerja sebelumnya'],
+                'payroll.pay_day'           => ['Tanggal gajian (0 = hari kerja terakhir)', 'int', '0', 'Jika jatuh di akhir pekan/libur, maju ke hari kerja sebelumnya'],
             ],
             'attendance' => [
                 'attendance.work_start'             => ['Jam masuk', 'time', '08:00', null],

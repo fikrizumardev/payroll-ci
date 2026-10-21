@@ -15,7 +15,7 @@ use CodeIgniter\Database\Seeder;
  */
 class TerRateSeeder extends Seeder
 {
-    private const TABLES = [
+    public const TABLES = [
         'A' => [
             [5_400_000, 0], [5_650_000, 0.25], [5_950_000, 0.5], [6_300_000, 0.75], [6_750_000, 1],
             [7_500_000, 1.25], [8_550_000, 1.5], [9_650_000, 1.75], [10_050_000, 2], [10_350_000, 2.25],

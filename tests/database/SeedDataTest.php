@@ -92,7 +92,7 @@ final class SeedDataTest extends CIUnitTestCase
         $this->assertSame(1, $galih['absent']);
 
         // Anisa tidak punya kehadiran sebelum tanggal masuk, Hadi tidak sesudah resign
-        $this->dontSeeInDatabase('attendances', ['employee_id' => $employees['EMP-0006'], 'date <' => '2026-08-03']);
+        $this->dontSeeInDatabase('attendances', ['employee_id' => $employees['EMP-0006'], 'date <' => '2026-08-10']);
         $this->dontSeeInDatabase('attendances', ['employee_id' => $employees['EMP-0031'], 'date >' => '2026-09-15']);
 
         // Tidak ada kehadiran di hari libur nasional
@@ -108,7 +108,7 @@ final class SeedDataTest extends CIUnitTestCase
             ->get()->getRowArray();
 
         $this->assertSame('EMP-0010', $head['nip']);
-        $this->seeInDatabase('loans', ['loan_no' => 'PJM-2026-0002', 'status' => 'active', 'remaining' => 11_000_000]);
+        $this->seeInDatabase('loans', ['loan_no' => 'PJM-2026-0002', 'status' => 'active', 'remaining' => 10_000_000]); // Jul (di luar sistem) + Agu (periode terkunci)
         $this->seeInDatabase('loans', ['loan_no' => 'PJM-2026-0004', 'status' => 'pending']);
     }
 }

@@ -26,13 +26,14 @@ class SalaryComponentSeeder extends Seeder
             ['MEAL', 'Uang Makan', 'earning', 'daily', 35_000, true, false, 'Per hari hadir (hadir + terlambat)'],
             ['OVERTIME', 'Lembur', 'earning', 'formula', 0, true, false, '1/173 × upah; jam ke-1 1,5×, berikutnya 2×'],
             ['ADJ', 'Bonus / Penyesuaian', 'earning', 'manual', 0, true, false, 'Bonus, THR, atau koreksi manual'],
+            ['PPH21_REFUND', 'Pengembalian Kelebihan PPh 21', 'earning', 'formula', 0, false, false, 'Lebih potong PPh 21 di masa pajak terakhir'],
 
             ['BPJS_KES_EE', 'BPJS Kesehatan (Karyawan)', 'deduction', 'formula', 0, false, false, '1% dari dasar upah, maks. batas upah'],
             ['JHT_EE', 'BPJS JHT (Karyawan)', 'deduction', 'formula', 0, false, false, '2% dari dasar upah'],
             ['JP_EE', 'BPJS Jaminan Pensiun (Karyawan)', 'deduction', 'formula', 0, false, false, '1% dari dasar upah, maks. batas upah'],
             ['PPH21', 'PPh 21', 'deduction', 'formula', 0, false, false, 'Metode TER (Jan–Nov), tahunan di Desember'],
-            ['ABSENT_DED', 'Potongan Alpha', 'deduction', 'formula', 0, false, false, 'Gaji pokok ÷ hari kerja × hari alpha'],
-            ['LATE_PEN', 'Denda Keterlambatan', 'deduction', 'formula', 0, false, false, 'Tarif per hari terlambat (Pengaturan)'],
+            ['ABSENT_DED', 'Potongan Alpha', 'deduction', 'formula', 0, true, false, 'Gaji pokok ÷ hari kerja × hari alpha; mengurangi bruto PPh 21'],
+            ['LATE_PEN', 'Denda Keterlambatan', 'deduction', 'formula', 0, true, false, 'Tarif per hari terlambat (Pengaturan); mengurangi bruto PPh 21'],
             ['LOAN', 'Cicilan Pinjaman', 'deduction', 'formula', 0, false, false, 'Cicilan pinjaman aktif periode berjalan'],
             ['ADJ_DED', 'Potongan Lain-lain', 'deduction', 'manual', 0, false, false, 'Koreksi potongan manual'],
 

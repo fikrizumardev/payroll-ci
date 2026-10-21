@@ -64,7 +64,7 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 - [x] **T-308 (P0)** `UserSeeder`: `admin` (superadmin), `sinta.maharani` & `putri.lestari` (hr), `budi.santoso` (finance), sisanya `employee`. Password di-hash. `hadi.gunawan` dibuat dengan `is_active = 0`.
 - [x] **T-309 (P0)** `AttendanceSeeder`: hari kerja Agu–Okt 2026 (Oktober s.d. kemarin), RNG deterministik (`Random\Randomizer` + `Mt19937`, seed 20261021), distribusi sesuai PRD §7.1, tidak ada record sebelum `join_date` atau sesudah `resign_date`, dan Galih wajib 1× `absent` di September. Lembur acak untuk jabatan eligible, status `approved` (lembur 7 hari terakhir dibiarkan `pending` untuk demo persetujuan).
 - [x] **T-310 (P0)** `LoanSeeder`: Kevin 12.000.000 / 12 bulan (mulai Juli 2026), Rizky 6.000.000 / 6 bulan (mulai Agu 2026), Dewi 3.000.000 / 3 bulan (lunas Juli 2026, status `paid_off`), Fajar 2.000.000 (status `pending`).
-- [ ] **T-311 (P0)** `PayrollHistorySeeder`: buat periode Agu, Sep, Okt 2026, lalu panggil `PayrollService::generate()` (**dependensi: Fase 6**). Bawa Agustus ke `locked`, September ke `paid`, dan Oktober tetap `draft`. Approver = `budi.santoso`.
+- [x] **T-311 (P0)** `PayrollHistorySeeder`: buat periode Agu, Sep, Okt 2026, lalu panggil `PayrollService::generate()` (**dependensi: Fase 6**). Bawa Agustus ke `locked`, September ke `paid`, dan Oktober tetap `draft`. Approver = `budi.santoso`.
 - [x] **T-312 (P1)** `AuditLogSeeder`: ±20 aktivitas contoh (login, master data, pinjaman). Aktivitas generate/approve payroll ditambahkan oleh T-311.
 - [x] **T-313 (P0)** `DatabaseSeeder` memanggil semua seeder dengan urutan yang benar di dalam transaksi, dengan guard: tolak jalan di `production` kecuali diberi `--force`.
 - AC fase: `php spark migrate:refresh && php spark db:seed DatabaseSeeder` menghasilkan 31 employees, 32 users (31 aktif termasuk `admin`, 1 nonaktif), ±1.600–1.900 attendances (tergantung tanggal seeding), 3 payroll_periods, serta payrolls sebanyak 31 (Agu), 31 (Sep, Hadi prorata), dan 30 (Okt). Menjalankan ulang menghasilkan angka yang sama persis.
@@ -100,24 +100,25 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 6 — Engine Payroll (inti, wajib unit test)
 
-- [ ] **T-601 (P0) `WorkdayCalendar`**: hari kerja (Senin–Jumat dikurangi holidays) untuk satu rentang, serta hari kerja aktif karyawan (memperhitungkan join/resign).
-- [ ] **T-602 (P0) `EarningCalculator`**: gaji pokok prorata, tunjangan tetap (prorata), tunjangan harian × hari hadir, dan penyesuaian manual.
-- [ ] **T-603 (P0) `OvertimeCalculator`**: upah sejam 1/173 dengan tarif 1,5× pada jam pertama dan 2× pada jam berikutnya (per hari lembur), hanya untuk jabatan eligible.
-- [ ] **T-604 (P0) `BpjsCalculator`**: porsi perusahaan & karyawan per program dengan batas upah Kes & JP, serta menghormati flag enrolled.
-- [ ] **T-605 (P0) `Pph21Calculator`**: `monthly(bruto, ptkpStatus)` dengan TER, dan `annual(employeeId, year)` untuk Desember/bulan terakhir (biaya jabatan, iuran pensiun, PTKP, Pasal 17, dikurangi PPh Jan–Nov).
-- [ ] **T-606 (P0) `PayrollService`**:
+- [x] **T-601 (P0) `WorkdayCalendar`**: hari kerja (Senin–Jumat dikurangi holidays) untuk satu rentang, serta hari kerja aktif karyawan (memperhitungkan join/resign).
+- [x] **T-602 (P0) `EarningCalculator`**: gaji pokok prorata, tunjangan tetap (prorata), tunjangan harian × hari hadir, dan penyesuaian manual.
+- [x] **T-603 (P0) `OvertimeCalculator`**: upah sejam 1/173 dengan tarif 1,5× pada jam pertama dan 2× pada jam berikutnya (per hari lembur), hanya untuk jabatan eligible.
+- [x] **T-604 (P0) `BpjsCalculator`**: porsi perusahaan & karyawan per program dengan batas upah Kes & JP, serta menghormati flag enrolled.
+- [x] **T-605 (P0) `Pph21Calculator`**: `monthly(bruto, ptkpStatus)` dengan TER, dan `annual(employeeId, year)` untuk Desember/bulan terakhir (biaya jabatan, iuran pensiun, PTKP, Pasal 17, dikurangi PPh Jan–Nov).
+- [x] **T-606 (P0) `PayrollService`**:
   - `generate(periodId)`: transaksi DB, hapus hasil lama (khusus `draft`), loop karyawan aktif di periode, panggil kalkulator, simpan `payrolls` + `payroll_items` + snapshot JSON, potong cicilan pinjaman, dan alpha/telat.
   - Mengembalikan ringkasan: jumlah karyawan, total bruto, total netto, dan daftar warning.
-- [ ] **T-607 (P0) `PayrollStateMachine`**: transisi valid `draft→review→approved→paid→locked` dan `review→draft` (reject + catatan). Cek peran per transisi. Saat `locked`, buat `loan_installments`, kurangi `loans.remaining`, dan set `paid_off` bila lunas.
-- [ ] **T-608 (P0) Unit test** (`tests/unit/Payroll/`):
+- [x] **T-607 (P0) `PayrollStateMachine`**: transisi valid `draft→review→approved→paid→locked` dan `review→draft` (reject + catatan). Cek peran per transisi. Saat `locked`, buat `loan_installments`, kurangi `loans.remaining`, dan set `paid_off` bila lunas.
+- [x] **T-608 (P0) Unit test** (`tests/unit/Payroll/`):
   - Contoh PRD §6.5 → PPh 265.215 dan THP 9.574.785
   - Batas upah JP & BPJS Kes (gaji 45 jt)
   - TER kategori B dan C (Sinta K/1, Hendra K/3)
-  - Prorata Anisa (masuk 3 Agu) dan Hadi (resign 15 Sep)
+  - Prorata Anisa (masuk 10 Agu → 14/19 hari kerja) dan Hadi (resign 15 Sep → 11/22)
   - Lembur 3 jam = 1,5 + 2 + 2 = 5,5 × upah sejam
   - PPh Desember: total setahun = Pasal 17
   - Transisi status ilegal melempar exception
 - AC fase: `php spark test` hijau dan generate 30 karyawan selesai < 2 detik.
+  - Tambahan: tabel `tax_ytd_balances` (saldo awal PPh 21 Jan–Jul) agar perhitungan setahun untuk karyawan resign / Desember benar; potongan alpha & telat mengurangi bruto PPh 21; seluruh aritmetika rupiah memakai integer (tanpa float).
 
 > Setelah fase ini selesai, kerjakan **T-311**, lalu jalankan `php spark migrate:refresh && php spark db:seed DatabaseSeeder`.
 

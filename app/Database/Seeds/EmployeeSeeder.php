@@ -28,7 +28,7 @@ class EmployeeSeeder extends Seeder
         ['EMP-0003', 'Sinta Maharani', 'P', 'HRD-01', 'permanent', '2018-07-02', 18_000_000, 'K/1', 'BCA', 'Bandung', '1986-02-14', null],
         ['EMP-0004', 'Dimas Saputra', 'L', 'HRD-02', 'permanent', '2022-02-14', 8_500_000, 'TK/0', 'BNI', 'Jakarta', '1996-06-30', null],
         ['EMP-0005', 'Putri Ayu Lestari', 'P', 'HRD-03', 'permanent', '2021-09-01', 8_000_000, 'TK/0', 'BCA', 'Semarang', '1995-11-08', null],
-        ['EMP-0006', 'Anisa Rahmawati', 'P', 'HRD-04', 'probation', '2026-08-03', 7_000_000, 'TK/0', 'BNI', 'Bogor', '2000-03-17', null],
+        ['EMP-0006', 'Anisa Rahmawati', 'P', 'HRD-04', 'probation', '2026-08-10', 7_000_000, 'TK/0', 'BNI', 'Bogor', '2000-03-17', null],
         ['EMP-0007', 'Budi Santoso', 'L', 'FIN-01', 'permanent', '2017-05-15', 20_000_000, 'K/2', 'Mandiri', 'Surakarta', '1982-07-19', null],
         ['EMP-0008', 'Yuliana Hartono', 'P', 'FIN-02', 'permanent', '2020-10-05', 9_500_000, 'K/0', 'BCA', 'Malang', '1991-12-02', null],
         ['EMP-0009', 'Fajar Nugroho', 'L', 'FIN-03', 'contract', '2023-03-20', 6_500_000, 'TK/0', 'BRI', 'Klaten', '1998-05-26', null],
