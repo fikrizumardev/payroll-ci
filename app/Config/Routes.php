@@ -155,6 +155,19 @@ $routes->group('payroll', ['filter' => ['auth', 'role:finance']], static functio
     $routes->get('(:num)/export/bank', 'PayrollController::exportBank/$1', ['as' => 'payroll.export.bank']);
 });
 
+// ---------------------------------------------------------------------
+// Laporan & ekspor — HR & Finance (Super Admin selalu boleh)
+// ---------------------------------------------------------------------
+$routes->group('reports', $viewMaster, static function (RouteCollection $routes): void {
+    $routes->get('/', 'ReportController::index', ['as' => 'reports.index']);
+    $routes->get('payroll', 'ReportController::payroll', ['as' => 'reports.payroll']);
+    $routes->get('bpjs', 'ReportController::bpjs', ['as' => 'reports.bpjs']);
+    $routes->get('pph21', 'ReportController::pph21', ['as' => 'reports.pph21']);
+    $routes->get('attendance', 'ReportController::attendance', ['as' => 'reports.attendance']);
+    $routes->get('cost-trend', 'ReportController::costTrend', ['as' => 'reports.cost-trend']);
+    $routes->get('(payroll|bpjs|pph21|attendance|cost-trend)/export', 'ReportController::export/$1', ['as' => 'reports.export']);
+});
+
 // Pengaturan — lihat: HR & Finance · ubah: Super Admin
 $routes->get('settings', 'SettingController::index', ['as' => 'settings.index', 'filter' => ['auth', 'role:hr,finance']]);
 $routes->post('settings/(:segment)', 'SettingController::update/$1', ['as' => 'settings.update', 'filter' => ['auth', 'role:superadmin']]);

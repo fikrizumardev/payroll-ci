@@ -184,11 +184,16 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 11 — Laporan
 
-- [ ] **T-1101 (P0) Rekap gaji** per periode, dengan grouping departemen, subtotal, dan grand total. Ekspor CSV + XLSX.
-- [ ] **T-1102 (P0) Laporan BPJS** per program, porsi perusahaan vs karyawan, ekspor CSV.
-- [ ] **T-1103 (P0) Laporan PPh 21** bulanan (NIK, NPWP, PTKP, bruto, kategori TER, tarif, PPh), ekspor CSV.
-- [ ] **T-1104 (P1) Laporan kehadiran** bulanan per karyawan.
-- [ ] **T-1105 (P1) Tren biaya** 12 bulan per departemen (grafik + tabel).
+- [x] **T-1101 (P0) Rekap gaji** per periode, dengan grouping departemen, subtotal, dan grand total. Ekspor CSV + XLSX.
+  - Angka dari hasil generate + snapshot payroll (sama dengan slip); periode Draft/Review ditandai "angka sementara". XLSX memakai rumus `SUBTOTAL()` untuk subtotal & total. Kolom PPh memakai nominal yang benar-benar dipotong (lebih potong masa terakhir tidak dihitung sebagai potongan).
+- [x] **T-1102 (P0) Laporan BPJS** per program, porsi perusahaan vs karyawan, ekspor CSV.
+  - Tarif & dasar upah dari perhitungan saat generate (batas upah Kesehatan & JP); rincian per karyawan; ekspor juga tersedia dalam XLSX.
+- [x] **T-1103 (P0) Laporan PPh 21** bulanan (NIK, NPWP, PTKP, bruto, kategori TER, tarif, PPh), ekspor CSV.
+  - Kolom mengikuti e-Bupot 21 (masa/tahun pajak, kode objek 21-100-01); NIK/NPWP disamarkan di layar, lengkap di file ekspor; dipotong, lebih potong dikembalikan, dan neto disetor dipisah.
+- [x] **T-1104 (P1) Laporan kehadiran** bulanan per karyawan.
+  - Termasuk menit terlambat, hari kerja belum tercatat, lembur disetujui, dan tingkat kehadiran; filter departemen; ekspor CSV/XLSX.
+- [x] **T-1105 (P1) Tren biaya** 12 bulan per departemen (grafik + tabel).
+  - Kolom bertumpuk dengan warna tetap per departemen (palet tervalidasi CVD), legenda, tooltip, label total, dan tabel lengkap. Format CSV memakai pemisah titik koma & desimal koma (Excel lokal Indonesia); setiap ekspor tercatat di audit log.
 
 ## Fase 12 — User Management & Audit
 
