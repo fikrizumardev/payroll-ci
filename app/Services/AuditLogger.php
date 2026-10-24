@@ -12,9 +12,23 @@ use Throwable;
  * Pencatat jejak aktivitas pengguna ke tabel `audit_logs`.
  *
  *   service('auditLogger')->log('payroll.approve', 'payroll_period', $id, 'Menyetujui payroll Oktober 2026');
+ *
+ * Data before/after disanitasi di satu tempat: rahasia (password, token) tidak pernah
+ * disimpan, dan nomor identitas (NIK, NPWP, rekening) disamarkan.
  */
 class AuditLogger
 {
+    /** Kunci yang nilainya tidak boleh tersimpan sama sekali. */
+    private const SECRET_KEYS = [
+        'password', 'password_hash', 'current_password', 'new_password', 'new_password_confirmation',
+        'token', 'token_hash', 'selector', 'validator', 'remember_token',
+    ];
+
+    /** Kunci nomor identitas yang disamarkan (3174•••••••••012). */
+    private const MASKED_KEYS = ['nik', 'npwp', 'bank_account_no'];
+
+    public const REDACTED = '[disembunyikan]';
+
     public function __construct(private readonly AuditLogModel $model = new AuditLogModel())
     {
     }
@@ -43,8 +57,8 @@ class AuditLogger
             'entity'      => $entity,
             'entity_id'   => $entityId === null ? null : (string) $entityId,
             'description' => $description === null ? null : mb_substr($description, 0, 255),
-            'before'      => $before,
-            'after'       => $after,
+            'before'      => $before === null ? null : self::sanitize($before),
+            'after'       => $after === null ? null : self::sanitize($after),
             'ip_address'  => $request instanceof IncomingRequest ? $request->getIPAddress() : null,
             'user_agent'  => $request instanceof IncomingRequest ? mb_substr((string) $request->getUserAgent(), 0, 255) : null,
         ];
@@ -55,6 +69,32 @@ class AuditLogger
             // Audit log tidak boleh menggagalkan aksi utama
             log_message('error', 'Gagal menulis audit log {action}: {message}', ['action' => $action, 'message' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Hapus rahasia & samarkan nomor identitas (rekursif, untuk data bersarang).
+     *
+     * @param array<array-key, mixed> $data
+     *
+     * @return array<array-key, mixed>
+     */
+    public static function sanitize(array $data): array
+    {
+        helper('ui');
+
+        foreach ($data as $key => $value) {
+            $name = is_string($key) ? strtolower($key) : null;
+
+            if ($name !== null && in_array($name, self::SECRET_KEYS, true)) {
+                $data[$key] = self::REDACTED;
+            } elseif (is_array($value)) {
+                $data[$key] = self::sanitize($value);
+            } elseif ($name !== null && in_array($name, self::MASKED_KEYS, true) && is_scalar($value) && (string) $value !== '' && ! str_contains((string) $value, '•')) {
+                $data[$key] = mask_id((string) $value);
+            }
+        }
+
+        return $data;
     }
 
     /**

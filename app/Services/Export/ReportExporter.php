@@ -209,7 +209,16 @@ class ReportExporter
             'money', 'int'       => (string) (int) $value,
             'decimal', 'percent' => str_replace('.', ',', rtrim(rtrim(number_format((float) $value, 3, '.', ''), '0'), '.')),
             'id'                 => $value === '' ? '' : "'" . $value,
-            default              => (string) $value,
+            default              => self::neutralizeFormula((string) $value),
         };
+    }
+
+    /**
+     * Cegah CSV/formula injection: teks yang diawali = + - @ (atau tab/CR) tidak boleh
+     * dieksekusi sebagai rumus saat file dibuka di spreadsheet.
+     */
+    private static function neutralizeFormula(string $value): string
+    {
+        return $value !== '' && strpbrk($value[0], "=+-@\t\r") !== false ? "'" . $value : $value;
     }
 }

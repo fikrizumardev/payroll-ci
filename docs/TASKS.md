@@ -197,9 +197,12 @@ Acuan: [`PRD.md`](./PRD.md). Kerjakan berurutan per fase. Setiap task punya **AC
 
 ## Fase 12 — User Management & Audit
 
-- [ ] **T-1201 (P0) User Management**: list (username, nama, peran, karyawan terkait, status, login terakhir), tambah/edit, reset password (set `must_change_password`), aktif/nonaktif. Super Admin tidak bisa menonaktifkan dirinya sendiri.
-- [ ] **T-1202 (P0) `AuditLogger`** dipanggil di semua aksi tulis penting.
-- [ ] **T-1203 (P1) Halaman Audit Log**: filter user/aksi/tanggal dan diff before/after.
+- [x] **T-1201 (P0) User Management**: list (username, nama, peran, karyawan terkait, status, login terakhir), tambah/edit, reset password (set `must_change_password`), aktif/nonaktif. Super Admin tidak bisa menonaktifkan dirinya sendiri.
+  - Password sementara dibuat otomatis (`PasswordGenerator`, lolos kebijakan password) dan ditampilkan sekali; reset/nonaktif mencabut token "Ingat saya" dan sesi berjalan; buka kunci akun; peran Karyawan wajib terhubung ke karyawan aktif; Super Admin tidak bisa mengubah perannya sendiri dan minimal satu Super Admin aktif tersisa.
+- [x] **T-1202 (P0) `AuditLogger`** dipanggil di semua aksi tulis penting.
+  - Sanitasi terpusat: password/token tidak pernah disimpan, NIK/NPWP/rekening disamarkan (termasuk data bersarang); resign karyawan mencatat penonaktifan akun; katalog label untuk setiap aksi.
+- [x] **T-1203 (P1) Halaman Audit Log**: filter user/aksi/tanggal dan diff before/after.
+  - Filter per modul atau aksi, rentang tanggal, dan kata kunci; linimasa per tanggal; rincian waktu, entitas (bertaut), IP, user agent, dan tabel perubahan. Akses Super Admin & Finance.
 
 ## Fase 13 — Hardening & QA
 

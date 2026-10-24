@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Services\Export\ReportExporter;
 use App\Services\Report\ReportService;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -191,6 +192,18 @@ final class ReportTest extends SeededFeatureTestCase
         $firstRow = $this->firstDataRow($sheet);
         $this->assertMatchesRegularExpression('/^EMP-\d{4}$/', $sheet->getCell('A' . $firstRow)->getValue());
         $this->assertIsInt($sheet->getCell('S' . $firstRow)->getValue());
+    }
+
+    public function testCsvExportNeutralizesFormulaInjection(): void
+    {
+        $csv = ReportExporter::csv(
+            [['label' => 'Nama', 'type' => 'text'], ['label' => 'Nominal', 'type' => 'money']],
+            [['cells' => ['=HYPERLINK("http://x","klik")', -5000]], ['cells' => ['@SUM(A1)', 0]], ['cells' => ['Andi', 1]]],
+        );
+
+        $this->assertStringContainsString("\"'=HYPERLINK(\"\"http://x\"\",\"\"klik\"\")\";-5000", $csv);
+        $this->assertStringContainsString("'@SUM(A1);0", $csv);
+        $this->assertStringContainsString("\nAndi;1", $csv);
     }
 
     // ------------------------------------------------------------------

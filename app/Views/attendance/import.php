@@ -123,7 +123,7 @@ $actionMeta = [
                     </div>
                 </div>
 
-                <div class="flex gap-1 overflow-x-auto border-b border-slate-100 px-3 pt-3" role="tablist" aria-label="Filter hasil validasi">
+                <div class="flex gap-1 overflow-x-auto overflow-y-hidden border-b border-slate-100 px-3 pt-3" role="tablist" aria-label="Filter hasil validasi">
                     <?php foreach (['all' => ['Semua', $s['total']], 'error' => ['Error', $s['errors']], 'insert' => ['Baru', $s['insert']], 'update' => ['Diubah', $s['update']], 'same' => ['Tetap', $s['same']]] as $key => [$label, $count]): ?>
                         <button type="button" role="tab" @click="filter = '<?= $key ?>'" :aria-selected="filter === '<?= $key ?>'"
                                 class="-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 pb-3 text-sm font-semibold transition"

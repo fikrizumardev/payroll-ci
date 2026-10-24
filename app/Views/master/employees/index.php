@@ -61,7 +61,7 @@ foreach ($employees as $employee) {
 ]) ?>
 
 <div class="card mb-6 overflow-hidden">
-    <div class="flex gap-1 overflow-x-auto border-b border-slate-100 px-3 pt-3" role="tablist" aria-label="Status karyawan">
+    <div class="flex gap-1 overflow-x-auto overflow-y-hidden border-b border-slate-100 px-3 pt-3" role="tablist" aria-label="Status karyawan">
         <?php foreach ($statusTabs as $status => [$label, $count]): ?>
             <a href="<?= esc($query(['status' => $status, 'page' => null]), 'attr') ?>" role="tab" aria-selected="<?= $filters['status'] === $status ? 'true' : 'false' ?>"
                class="-mb-px flex shrink-0 items-center gap-2 border-b-2 px-3 pb-3 text-sm font-semibold transition <?= $filters['status'] === $status ? 'border-brand-600 text-brand-700' : 'border-transparent text-slate-500 hover:text-slate-800' ?>">

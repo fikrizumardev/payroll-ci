@@ -259,7 +259,8 @@ class EmployeeController extends BaseController
             return redirect()->to($back)->with('error', 'Tanggal keluar tidak boleh sebelum tanggal masuk (' . tanggal_id($employee['join_date']) . ').');
         }
 
-        $db = db_connect();
+        $db      = db_connect();
+        $account = (new UserModel())->where(['employee_id' => $id, 'is_active' => 1])->first();
         $db->transStart();
 
         $model->update($id, ['status' => $status, 'resign_date' => $date]);
@@ -272,6 +273,10 @@ class EmployeeController extends BaseController
         $this->audit('employee.resign', 'employee', $id, "Mencatat {$label} {$employee['full_name']} per " . tanggal_id($date) . ($note !== '' ? " — {$note}" : ''),
             ['status' => $employee['status'], 'resign_date' => null],
             ['status' => $status, 'resign_date' => $date]);
+
+        if ($account !== null) {
+            $this->audit('user.deactivate', 'user', $account['id'], "Menonaktifkan akun {$account['username']} karena karyawan {$label}", ['is_active' => 1], ['is_active' => 0]);
+        }
 
         return redirect()->to($back)->with('success', "{$employee['full_name']} dicatat {$label} per " . tanggal_id($date, 'long') . '. Akun login dinonaktifkan; gaji periode terakhir dihitung prorata.');
     }
@@ -476,7 +481,9 @@ class EmployeeController extends BaseController
             'must_change_password' => 1,
         ]);
 
-        $this->audit('user.create', 'user', (int) $users->getInsertID(), "Membuat akun login {$username} untuk {$fullName}");
+        $this->audit('user.create', 'user', (int) $users->getInsertID(), "Membuat akun login {$username} untuk {$fullName}", null, [
+            'username' => $username, 'name' => $fullName, 'role' => UserModel::ROLE_EMPLOYEE, 'employee_id' => $employeeId,
+        ]);
 
         return $username;
     }

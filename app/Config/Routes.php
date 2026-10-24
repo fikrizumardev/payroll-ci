@@ -168,6 +168,21 @@ $routes->group('reports', $viewMaster, static function (RouteCollection $routes)
     $routes->get('(payroll|bpjs|pph21|attendance|cost-trend)/export', 'ReportController::export/$1', ['as' => 'reports.export']);
 });
 
+// ---------------------------------------------------------------------
+// Sistem: user management (Super Admin) & audit log (Super Admin, Finance lihat)
+// ---------------------------------------------------------------------
+$routes->group('users', ['filter' => ['auth', 'role:superadmin']], static function (RouteCollection $routes): void {
+    $routes->get('/', 'UserController::index', ['as' => 'users.index']);
+    $routes->post('/', 'UserController::store', ['as' => 'users.store']);
+    $routes->post('(:num)', 'UserController::update/$1', ['as' => 'users.update']);
+    $routes->post('(:num)/reset-password', 'UserController::resetPassword/$1', ['as' => 'users.reset-password']);
+    $routes->post('(:num)/activate', 'UserController::activate/$1', ['as' => 'users.activate']);
+    $routes->post('(:num)/deactivate', 'UserController::deactivate/$1', ['as' => 'users.deactivate']);
+    $routes->post('(:num)/unlock', 'UserController::unlock/$1', ['as' => 'users.unlock']);
+});
+
+$routes->get('audit-logs', 'AuditLogController::index', ['as' => 'audit-logs.index', 'filter' => ['auth', 'role:finance']]);
+
 // Pengaturan — lihat: HR & Finance · ubah: Super Admin
 $routes->get('settings', 'SettingController::index', ['as' => 'settings.index', 'filter' => ['auth', 'role:hr,finance']]);
 $routes->post('settings/(:segment)', 'SettingController::update/$1', ['as' => 'settings.update', 'filter' => ['auth', 'role:superadmin']]);

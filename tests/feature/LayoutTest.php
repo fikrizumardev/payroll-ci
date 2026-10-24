@@ -76,12 +76,19 @@ final class LayoutTest extends CIUnitTestCase
         $this->actingAs('andi.pratama')->get('my')->assertOK();
     }
 
-    public function testUnbuiltModulesAreMarkedComingSoon(): void
+    public function testEveryMenuModuleIsAvailable(): void
     {
         $result = $this->actingAs('admin')->get('dashboard');
 
-        $result->assertSee('Segera');
+        // Seluruh route menu sudah terdaftar: tidak ada lagi menu bertanda "Segera"
+        $result->assertDontSee('Segera');
         $result->assertSeeElement('a[aria-current=page]');
+
+        foreach (config('Navigation')->groups as $group) {
+            foreach ($group['items'] as $item) {
+                $this->assertTrue(route_exists($item['route']), "Route menu {$item['route']} belum terdaftar.");
+            }
+        }
     }
 
     public function testComponentRenderingIsIsolated(): void

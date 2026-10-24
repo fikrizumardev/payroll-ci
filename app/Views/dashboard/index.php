@@ -276,7 +276,11 @@ $compact = static fn (int $amount): string => match (true) {
         <section class="card xl:col-span-2" aria-labelledby="activity-heading">
             <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
                 <h2 id="activity-heading" class="text-base font-semibold text-slate-900">Aktivitas Terbaru</h2>
-                <span class="text-xs text-slate-500">Audit log</span>
+                <?php if (service('auth')->hasRole('finance')): ?>
+                    <a href="<?= url_to('audit-logs.index') ?>" class="text-sm font-semibold text-brand-600 hover:text-brand-700">Lihat audit log →</a>
+                <?php else: ?>
+                    <span class="text-xs text-slate-500">Audit log</span>
+                <?php endif ?>
             </div>
             <?php if ($activities === []): ?>
                 <?= component('empty_state', ['title' => 'Belum ada aktivitas', 'icon' => 'scroll-text', 'compact' => true]) ?>
